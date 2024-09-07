@@ -46,13 +46,21 @@ class MainActivity : ComponentActivity() {
 fun Lab1WidgetPreview() {
     Lab2Theme {
         val context = LocalContext.current
-        var inputMinimalValue by remember { mutableStateOf("") }
-        var minimalNumericValue by remember { mutableFloatStateOf(0f) }
+        var inputMinimalValue: String by remember { mutableStateOf("") }
+        var minimalNumericValue: Float by remember { mutableFloatStateOf(0f) }
 
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding).fillMaxSize(), verticalArrangement = Arrangement.Center) {
                 Text(
-                    text = "Lab1",
+                    text = "Lab2",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                )
+                Text(
+                    text = "Введите точность вычислений",
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(innerPadding)
@@ -71,8 +79,9 @@ fun Lab1WidgetPreview() {
 
                 Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(12.dp),
                     onClick = {
-                        while(true){
-
+                        var nextValue: Float = 1f
+                        while(nextValue > minimalNumericValue){
+                            
                         }
                     }) {
                     Text("Посчитать ряд")
