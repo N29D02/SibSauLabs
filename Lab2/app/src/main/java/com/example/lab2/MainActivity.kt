@@ -48,6 +48,7 @@ fun Lab1WidgetPreview() {
         val context = LocalContext.current
         var inputMinimalValue: String by remember { mutableStateOf("") }
         var minimalNumericValue: Float by remember { mutableFloatStateOf(0f) }
+        var xValue: Float by remember { mutableFloatStateOf(0f) }
 
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding).fillMaxSize(), verticalArrangement = Arrangement.Center) {
@@ -75,13 +76,33 @@ fun Lab1WidgetPreview() {
                         imeAction = ImeAction.Done
                     ),
                     value = inputMinimalValue,
-                    onValueChange = {newText -> minimalNumericValue = newText.toFloat()})
+                    onValueChange = {newText -> minimalNumericValue = newText.toFloat()}
+                )
+
+                Text(
+                    text = "Введите x",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                )
+                TextField(modifier = Modifier
+                    .padding(top = 12.dp, start = 36.dp, end = 36.dp)
+                    .fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    value = inputMinimalValue,
+                    onValueChange = {newText -> minimalNumericValue = newText.toFloat()}
+                )
 
                 Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(12.dp),
                     onClick = {
                         var nextValue: Float = 1f
                         while(nextValue > minimalNumericValue){
-                            
+
                         }
                     }) {
                     Text("Посчитать ряд")
