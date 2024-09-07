@@ -12,7 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalPlatformTextInputPluginRegistry
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,7 @@ class MainActivity : ComponentActivity() {
             Lab1Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
-                        Greeting(
+                        Lab1Widget(
                             name = "Lab1",
                             modifier = Modifier
                                 .padding(innerPadding)
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun Lab1Widget(name: String, modifier: Modifier = Modifier) {
     Text(
         text = "This is $name!",
         textAlign = TextAlign.Center,
@@ -51,11 +50,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun Lab1WidgetPreview() {
     Lab1Theme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
-                Greeting(
+                Lab1Widget(
                     name = "Lab1",
                     modifier = Modifier
                         .padding(innerPadding)
