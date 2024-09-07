@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.lab1.ui.theme.Lab1Theme
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Lab1",
-                        modifier = Modifier.padding(innerPadding).fillMaxWidth()
+                        modifier = Modifier.padding(innerPadding).fillMaxWidth().padding(top = 12.dp)
                     )
                 }
             }
