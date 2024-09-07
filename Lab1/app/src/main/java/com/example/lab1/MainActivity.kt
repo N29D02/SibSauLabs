@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,27 +36,12 @@ class MainActivity : ComponentActivity() {
             Lab1Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
-                        Lab1Widget(
-                            name = "Lab1",
-                            modifier = Modifier
-                                .padding(innerPadding)
-                                .fillMaxWidth()
-                                .padding(top = 12.dp)
-                        )
+                        Lab1WidgetPreview()
                     }
                 }
             }
         }
     }
-}
-
-@Composable
-fun Lab1Widget(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "This is $name!",
-        textAlign = TextAlign.Center,
-        modifier = modifier
-    )
 }
 
 @Preview(showBackground = true)
@@ -66,16 +52,17 @@ fun Lab1WidgetPreview() {
         var inputString by remember {mutableStateOf("")}
 
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding)) {
-                Lab1Widget(
-                    name = "Lab1",
+            Column(modifier = Modifier.padding(innerPadding).fillMaxSize(), verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Lab1",
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                 )
                 TextField(modifier = Modifier
-                    .padding(top = 12.dp)
+                    .padding(top = 12.dp, start = 36.dp, end = 36.dp)
                     .fillMaxWidth(),
                 value = inputString,
                 onValueChange = {newText -> inputString = newText})
@@ -86,7 +73,7 @@ fun Lab1WidgetPreview() {
                         Toast.makeText(context, "Это Дуб", Toast.LENGTH_SHORT).show()
                     }
                     else{
-
+                        Toast.makeText(context, "Это что то явно другое", Toast.LENGTH_SHORT).show()
                     }
                     }) {
                     Text("Проверить")
