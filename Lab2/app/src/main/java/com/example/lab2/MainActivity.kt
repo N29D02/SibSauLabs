@@ -10,18 +10,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +46,8 @@ class MainActivity : ComponentActivity() {
 fun Lab1WidgetPreview() {
     Lab2Theme {
         val context = LocalContext.current
-        var inputString by remember { mutableStateOf("") }
+        var inputMinimalValue by remember { mutableStateOf("") }
+        var minimalNumericValue by remember { mutableFloatStateOf(0f) }
 
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding).fillMaxSize(), verticalArrangement = Arrangement.Center) {
@@ -57,19 +62,20 @@ fun Lab1WidgetPreview() {
                 TextField(modifier = Modifier
                     .padding(top = 12.dp, start = 36.dp, end = 36.dp)
                     .fillMaxWidth(),
-                    value = inputString,
-                    onValueChange = {newText -> inputString = newText})
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    value = inputMinimalValue,
+                    onValueChange = {newText -> minimalNumericValue = newText.toFloat()})
 
                 Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(12.dp),
                     onClick = {
-                        if (inputString.lowercase().contains('d')) {
-                            Toast.makeText(context, "Это Дуб", Toast.LENGTH_SHORT).show()
-                        }
-                        else{
-                            Toast.makeText(context, "Это что то явно другое", Toast.LENGTH_SHORT).show()
+                        while(true){
+
                         }
                     }) {
-                    Text("Проверить")
+                    Text("Посчитать ряд")
                 }
             }
         }
