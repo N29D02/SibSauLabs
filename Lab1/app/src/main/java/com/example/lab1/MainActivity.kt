@@ -69,7 +69,7 @@ fun Lab1WidgetPreview() {
 
                 Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(12.dp),
                 onClick = {
-                    if (inputString.contains('d')) {
+                    if (inputString.lowercase().contains('d')) {
                         Toast.makeText(context, "Это Дуб", Toast.LENGTH_SHORT).show()
                     }
                     else{
