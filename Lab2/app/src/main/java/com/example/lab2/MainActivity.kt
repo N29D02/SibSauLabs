@@ -80,7 +80,7 @@ fun Lab2WidgetPreview(){
                         counter++
                     }
 
-                    outputString = "Sum = " + ((sum*10000).toInt()/10000.0).toString() + ", cycles: " + counter + ", lastSum: " + ((nextSum*10000).toInt()/10000.0).toString()
+                    outputString = "Sum = $sum, cycles: $counter, lastSum: $nextSum"
                 }) {
                     Text(text = "Calculate")
                 }
