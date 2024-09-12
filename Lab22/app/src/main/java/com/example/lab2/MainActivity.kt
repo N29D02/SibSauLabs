@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -18,12 +19,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Lab2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(innerPadding)) {
-                        Lab2WidgetPreview()
-                    }
-                }
+            Lab2WidgetPreview()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun Lab2WidgetPreview(){
+    Lab2Theme {
+        Scaffold(Modifier.fillMaxSize()){ innerPadding ->
+            Column(Modifier.padding(innerPadding).fillMaxSize(),
+                verticalArrangement = Arrangement.Center){
+
             }
         }
     }

@@ -35,13 +35,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Lab1Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(innerPadding)) {
-                        Lab1WidgetPreview()
-                    }
-                }
-            }
+            Lab1WidgetPreview()
         }
     }
 }
