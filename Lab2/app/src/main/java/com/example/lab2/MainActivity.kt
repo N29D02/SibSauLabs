@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,78 +38,44 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            Lab1WidgetPreview()
+            Lab2WidgetPreview()
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun Lab1WidgetPreview() {
+fun Lab2WidgetPreview(){
     Lab2Theme {
-        val context = LocalContext.current
-        var inputMinimalValue: String by remember { mutableStateOf("") }
-        var minimalNumericValue: Float by remember { mutableFloatStateOf(0f) }
-        var xValue: Float by remember { mutableFloatStateOf(0f) }
+        var sum by remember { mutableDoubleStateOf(0.0) }
+        var inputString by remember { mutableStateOf("")}
 
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding).fillMaxSize(), verticalArrangement = Arrangement.Center) {
+        val o_accuracy = 0.00001f
+
+        var nextSum = 1
+
+        Scaffold(Modifier.fillMaxSize()){ innerPadding ->
+            Column(
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center){
                 Text(
-                    text = "Lab2",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
+                    text = "",
+                    textAlign =  TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Text(
-                    text = "Введите точность вычислений",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                )
-                TextField(modifier = Modifier
-                    .padding(top = 12.dp, start = 36.dp, end = 36.dp)
-                    .fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    value = inputMinimalValue,
-                    onValueChange = {newText -> minimalNumericValue = newText.toFloat()}
-                )
-
-                Text(
-                    text = "Введите x",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                )
-                TextField(modifier = Modifier
-                    .padding(top = 12.dp, start = 36.dp, end = 36.dp)
-                    .fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    value = inputMinimalValue,
-                    onValueChange = {newText -> minimalNumericValue = newText.toFloat()}
-                )
-
-                Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(12.dp),
-                    onClick = {
-                        var nextValue: Float = 1f
-                        while(nextValue > minimalNumericValue){
-
-                        }
-                    }) {
-                    Text("Посчитать ряд")
+                TextField(value = inputString, onValueChange = {newText -> inputString = newText})
+                Button(onClick = {
+                    getCalculation()
+                }) {
                 }
             }
         }
     }
 }
+
+fun getCalculation(){
+
+}
+

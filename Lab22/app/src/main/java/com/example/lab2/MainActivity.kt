@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -31,18 +32,27 @@ class MainActivity : ComponentActivity() {
 fun Lab2WidgetPreview(){
     Lab2Theme {
         var sum by remember { mutableStateOf(0)}
+        var inputString by remember { mutableStateOf("")}
 
         val o_accuracy = 0.00001f
 
+        var nextSum = 1/
+
+        while
+
 
         Scaffold(Modifier.fillMaxSize()){ innerPadding ->
-            Column(Modifier.padding(innerPadding).fillMaxSize(),
+            Column(
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Center){
                 Text(
                     text = "",
                     textAlign =  TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
+                TextField(value = inputString, onValueChange = newText -> inputString = newText)
             }
         }
     }
