@@ -32,6 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lab2.ui.theme.Lab2Theme
+import java.lang.Math.pow
+import kotlin.math.abs
+import kotlin.math.pow
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,35 +50,42 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Lab2WidgetPreview(){
     Lab2Theme {
-        var sum by remember { mutableDoubleStateOf(0.0) }
         var inputString by remember { mutableStateOf("")}
-
-        val o_accuracy = 0.00001f
-
-        var nextSum = 1
+        var outputString by remember { mutableStateOf("")}
 
         Scaffold(Modifier.fillMaxSize()){ innerPadding ->
             Column(
                 Modifier
-                    .padding(innerPadding)
+                    .padding(innerPadding).padding(horizontal = 88.dp)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center){
                 Text(
-                    text = "",
+                    text = outputString,
                     textAlign =  TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
-                TextField(value = inputString, onValueChange = {newText -> inputString = newText})
-                Button(onClick = {
-                    getCalculation()
+                TextField(value = inputString, modifier = Modifier.fillMaxWidth(), onValueChange = {newText -> inputString = newText})
+                Button(modifier = Modifier.fillMaxWidth(), onClick = {
+
+                    val x = inputString.toInt()
+                    var nextSum = 1/x.toDouble()
+                    var sum = nextSum
+                    val accuracyMultiplicator = 7
+                    var counter = 1
+
+
+                    while (abs(nextSum) > (10.0).pow(-accuracyMultiplicator)){
+                        nextSum = (-1).toDouble().pow(counter)/((counter*2-1)*x*x.toDouble().pow((counter * 2 - 1).toDouble()))
+                        sum += nextSum
+                        counter++
+                    }
+
+                    outputString = "Sum = " + ((sum*10000).toInt()/10000.0).toString() + ", cycles: " + counter + ", lastSum: " + ((nextSum*10000).toInt()/10000.0).toString()
                 }) {
+                    Text(text = "Calculate")
                 }
             }
         }
     }
-}
-
-fun getCalculation(){
-
 }
 
