@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,7 +55,15 @@ fun Lab3WidgetPreview(){
                 TextField(value = inputString, modifier = Modifier.fillMaxWidth(), onValueChange = {
                     newText -> inputString = newText
 
-                    
+                    val numString = "0123456789"
+                    var nonNumCount = 0
+
+                    for (char in outputString){
+                        if (!numString.contains(char)){
+                            nonNumCount += 1
+                        }
+                    }
+                    outputString = nonNumCount.toString()
                 })
             }
         }
