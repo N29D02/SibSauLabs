@@ -1,6 +1,7 @@
 package com.example.lab1
 
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -52,7 +54,9 @@ fun Lab1WidgetPreview() {
         var inputString by remember {mutableStateOf("")}
 
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding).fillMaxSize(), verticalArrangement = Arrangement.Center) {
+            Column(modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(), verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "Lab1",
                     textAlign = TextAlign.Center,
@@ -65,19 +69,16 @@ fun Lab1WidgetPreview() {
                     .padding(top = 12.dp, start = 36.dp, end = 36.dp)
                     .fillMaxWidth(),
                 value = inputString,
-                onValueChange = {newText -> inputString = newText})
-
-                Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(12.dp),
-                onClick = {
-                    if (inputString.lowercase().contains('d')) {
-                        Toast.makeText(context, "Это Дуб", Toast.LENGTH_SHORT).show()
+                onValueChange = {newText ->
+                    if (newText.length <= 1){
+                        inputString = newText
+                        if (inputString.lowercase().contains('d')) {
+                            val toast = Toast.makeText(context, "Это Дуб", Toast.LENGTH_SHORT)
+                            toast.setGravity(Gravity.TOP, 0 ,0)
+                            toast.show()
+                        }
                     }
-                    else{
-                        Toast.makeText(context, "Это что то явно другое", Toast.LENGTH_SHORT).show()
-                    }
-                    }) {
-                    Text("Проверить")
-                }
+                })
             }
         }
     }
