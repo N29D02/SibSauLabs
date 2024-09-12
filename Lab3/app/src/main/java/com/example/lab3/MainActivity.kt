@@ -58,9 +58,11 @@ fun Lab3WidgetPreview(){
                     val numString = "0123456789"
                     var nonNumCount = 0
 
-                    for (char in outputString){
+                    for (char in inputString){
+                        println(char)
                         if (!numString.contains(char)){
                             nonNumCount += 1
+                            print(char)
                         }
                     }
                     outputString = nonNumCount.toString()
