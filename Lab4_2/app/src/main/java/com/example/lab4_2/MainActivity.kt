@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,148 +37,98 @@ import androidx.compose.ui.unit.dp
 import com.example.lab4_2.ui.theme.Lab4_2Theme
 import com.example.lab4_2.ui.theme.QuizQuestions
 
-class MainActivity : ComponentActivity() {
-    private var currentQuestionId = 0
-    private var correctAnswersCount = 0
-    private var keepingAnswerState = false
-    private var isGameStarted = false
-    private var isGameEnded = false
 
+
+class MainActivity : ComponentActivity() {
+
+    private val quizViewModel: QuizViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        savedInstanceState?.let {
-            currentQuestionId = it.getInt("currentQuestionId", 0)
-            correctAnswersCount = it.getInt("correctAnswersCount", 0)
-            keepingAnswerState = it.getBoolean("keepingAnswerState", false)
-            isGameStarted = it.getBoolean("isGameStarted", false)
-            isGameEnded = it.getBoolean("isGameEnded", false)
-        }
-
         setContent {
-            Lab4WidgetPreview()
+            Lab4WidgetPreview(quizViewModel)
         }
     }
+}
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt("currentQuestionId", currentQuestionId)
-        outState.putInt("correctAnswersCount", correctAnswersCount)
-        outState.putBoolean("keepingAnswerState", keepingAnswerState)
-        outState.putBoolean("isGameStarted", isGameStarted)
-        outState.putBoolean("isGameEnded", isGameEnded)
-    }
+@OptIn(ExperimentalMaterial3Api::class)
+//@Preview
+@Composable
+fun Lab4WidgetPreview(viewModel: QuizViewModel){
+    val quizQuestions = QuizQuestions()
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    //@Preview
-    @Composable
-    fun Lab4WidgetPreview(){
-        val quizQuestions = QuizQuestions()
+    Lab4_2Theme {
+        Scaffold(Modifier.fillMaxSize(), topBar = {
+            TopAppBar(colors = topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.primary,
+            ),
+                title = { Text("GeoQuiz") })
 
-        /*
-        var currentQuestionId by rememberSaveable  { mutableIntStateOf(0) }
-        var correctAnswersCount by rememberSaveable  { mutableIntStateOf(0) }
-        var keepingAnswerState by rememberSaveable  { mutableStateOf(false) }
-        var isGameStarted by rememberSaveable  { mutableStateOf(false) }
-        var isGameEnded by rememberSaveable  { mutableStateOf(false) }
-        */
+        }){ innerPadding ->
+            Column(
+                Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 12.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally){
+                if (viewModel.isGameEnded){
+                    Text("Количество правильных ответов: ${viewModel.correctAnswersCount}", Modifier.padding(top = 24.dp))
 
-        Lab4_2Theme {
-            Scaffold(Modifier.fillMaxSize(), topBar = {
-                TopAppBar(colors = topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                    title = { Text("GeoQuiz") })
+                    Button(modifier = Modifier, onClick = {
+                        viewModel.resetGame()
+                    }) {
+                        Text("Повторить?")
+                    }
+                }
+                else{
+                    if (viewModel.isGameStarted){
+                        Text(viewModel.getCurrentQuestion(), Modifier.padding(top = 24.dp))
 
-            }){ innerPadding ->
-                Column(
-                    Modifier
-                        .padding(innerPadding)
-                        .padding(horizontal = 12.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally){
-                    if (isGameEnded){
-                        Text("Количество правильных ответов: $correctAnswersCount", Modifier.padding(top = 24.dp))
+                        Row(
+                            Modifier
+                                .padding(innerPadding)
+                                .padding(horizontal = 12.dp)
+                                .fillMaxSize(),
 
-                        Button(modifier = Modifier, onClick = {
-                            currentQuestionId = 0
-                            correctAnswersCount = 0
-                            keepingAnswerState = false
-                            isGameStarted = false
-                            isGameEnded = false
-                            setContent { Lab4WidgetPreview() }
-                        }) {
-                            Text("Повторить?")
+                            ){
+                            if (!viewModel.keepingAnswerState){
+                                Button(modifier = Modifier, onClick = {
+                                    viewModel.makeAnswer(true)
+                                }) {
+                                    Text("Правда")
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Column(){
+                                if (!viewModel.keepingAnswerState) {
+                                    Button(modifier = Modifier, onClick = {
+                                        viewModel.makeAnswer(false)
+                                    }) {
+                                        Text("Ложь")
+                                    }
+                                }
+
+                                if (viewModel.keepingAnswerState){
+                                    Button(modifier = Modifier, onClick = {
+                                        viewModel.getNextQuestion()
+                                    }) {
+                                        Text("Далее")
+                                    }
+                                }
+                            }
                         }
                     }
-                    else{
-                        if (isGameStarted){
-                            Text(quizQuestions.questionsPair[currentQuestionId].first, Modifier.padding(top = 24.dp))
 
-                            Row(
-                                Modifier
-                                    .padding(innerPadding)
-                                    .padding(horizontal = 12.dp)
-                                    .fillMaxSize(),
-
-                                ){
-                                if (!keepingAnswerState){
-                                    Button(modifier = Modifier, onClick = {
-                                        if (quizQuestions.questionsPair[currentQuestionId].second){
-                                            correctAnswersCount++
-                                        }
-                                        keepingAnswerState = true
-                                        setContent { Lab4WidgetPreview() }
-                                    }) {
-                                        Text("Правда")
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.weight(1f))
-
-                                Column(){
-                                    if (!keepingAnswerState) {
-                                        Button(modifier = Modifier, onClick = {
-                                            if (!quizQuestions.questionsPair[currentQuestionId].second) {
-                                                correctAnswersCount++
-                                            }
-
-                                            keepingAnswerState = true
-                                            setContent { Lab4WidgetPreview() }
-                                        }) {
-                                            Text("Ложь")
-                                        }
-                                    }
-
-                                    if (keepingAnswerState){
-                                        Button(modifier = Modifier, onClick = {
-                                            if (currentQuestionId < quizQuestions.questionsPair.count() - 1){
-                                                currentQuestionId++
-                                                keepingAnswerState = false
-                                                setContent { Lab4WidgetPreview() }
-                                            }
-                                            else{
-                                                isGameEnded = true
-                                                setContent { Lab4WidgetPreview() }
-                                            }
-                                        }) {
-                                            Text("Далее")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!isGameStarted){
-                            Button(modifier = Modifier, onClick = {
-                                isGameStarted = true
-                                setContent { Lab4WidgetPreview() }
-                            }) {
-                                Text("Начать")
-                            }
+                    if (!viewModel.isGameStarted){
+                        Button(modifier = Modifier, onClick = {
+                            viewModel.setGameStarted()
+                        }) {
+                            Text("Начать")
                         }
                     }
                 }
