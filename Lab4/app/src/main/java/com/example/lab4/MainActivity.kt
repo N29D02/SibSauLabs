@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,11 +51,11 @@ class MainActivity : ComponentActivity() {
 fun Lab4WidgetPreview(){
     val quizQuestions = QuizQuestions()
 
-    var currentQuestionId by remember { mutableIntStateOf(0) }
-    var correctAnswersCount by remember { mutableIntStateOf(0) }
-    var keepingAnswerState by remember { mutableStateOf(false) }
-    var isGameStarted by remember { mutableStateOf(true) }
-    var isGameEnded by remember { mutableStateOf(false) }
+    var currentQuestionId by rememberSaveable  { mutableIntStateOf(0) }
+    var correctAnswersCount by rememberSaveable  { mutableIntStateOf(0) }
+    var keepingAnswerState by rememberSaveable  { mutableStateOf(false) }
+    var isGameStarted by rememberSaveable  { mutableStateOf(true) }
+    var isGameEnded by rememberSaveable  { mutableStateOf(false) }
 
     Lab4Theme {
         Scaffold(Modifier.fillMaxSize(), topBar = {
