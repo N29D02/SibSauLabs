@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +47,9 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun Lab4WidgetPreview(){
+    var currentQuestionId = remember { mutableIntStateOf(0) }
+    var correctAnswersCount = remember { mutableIntStateOf(0) }
+    var keepingAnswerState = remember { mutableStateOf(false) }
 
     Lab4Theme {
         Scaffold(Modifier.fillMaxSize(), topBar = {
