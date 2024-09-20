@@ -54,7 +54,7 @@ fun Lab4WidgetPreview(){
     var currentQuestionId by rememberSaveable  { mutableIntStateOf(0) }
     var correctAnswersCount by rememberSaveable  { mutableIntStateOf(0) }
     var keepingAnswerState by rememberSaveable  { mutableStateOf(false) }
-    var isGameStarted by rememberSaveable  { mutableStateOf(true) }
+    var isGameStarted by rememberSaveable  { mutableStateOf(false) }
     var isGameEnded by rememberSaveable  { mutableStateOf(false) }
 
     Lab4Theme {
