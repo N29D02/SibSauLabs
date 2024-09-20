@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -47,9 +48,13 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun Lab4WidgetPreview(){
-    var currentQuestionId = remember { mutableIntStateOf(0) }
-    var correctAnswersCount = remember { mutableIntStateOf(0) }
-    var keepingAnswerState = remember { mutableStateOf(false) }
+    val quizQuestions = QuizQuestions()
+
+    var currentQuestionId by remember { mutableIntStateOf(0) }
+    var correctAnswersCount by remember { mutableIntStateOf(0) }
+    var keepingAnswerState by remember { mutableStateOf(false) }
+    var isGameStarted by remember { mutableStateOf(true) }
+    var isGameEnded by remember { mutableStateOf(false) }
 
     Lab4Theme {
         Scaffold(Modifier.fillMaxSize(), topBar = {
@@ -67,40 +72,81 @@ fun Lab4WidgetPreview(){
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally){
+                if (isGameEnded){
+                    Text("Количество правильных ответов: $correctAnswersCount", Modifier.padding(top = 24.dp))
 
-                Text("Question example", Modifier.padding(top = 24.dp))
-                Row(
-                    Modifier
-                        .padding(innerPadding)
-                        .padding(horizontal = 12.dp)
-                        .fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ){
                     Button(modifier = Modifier, onClick = {
+                        currentQuestionId = 0
+                        correctAnswersCount = 0
+                        keepingAnswerState = false
+                        isGameStarted = false
+                        isGameEnded = false
                     }) {
-                        Text("True")
+                        Text("Повторить?")
                     }
-                    Column(){
-                        Button(modifier = Modifier, onClick = {
-                        }) {
-                            Text("False")
-                        }
-                        Button(modifier = Modifier, onClick = {
-                        }) {
-                            Text("Next")
+                }
+                else{
+                    if (isGameStarted){
+                        Text(quizQuestions.questionsPair[currentQuestionId].first, Modifier.padding(top = 24.dp))
+
+                        Row(
+                            Modifier
+                                .padding(innerPadding)
+                                .padding(horizontal = 12.dp)
+                                .fillMaxSize(),
+
+                        ){
+                            if (!keepingAnswerState){
+                                Button(modifier = Modifier, onClick = {
+                                    if (quizQuestions.questionsPair[currentQuestionId].second){
+                                        correctAnswersCount++
+                                    }
+                                    keepingAnswerState = true
+                                }) {
+                                    Text("Правда")
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Column(){
+                                if (!keepingAnswerState) {
+                                    Button(modifier = Modifier, onClick = {
+                                        if (!quizQuestions.questionsPair[currentQuestionId].second) {
+                                            correctAnswersCount++
+                                        }
+
+                                        keepingAnswerState = true
+                                    }) {
+                                        Text("Ложь")
+                                    }
+                                }
+
+                                if (keepingAnswerState){
+                                    Button(modifier = Modifier, onClick = {
+                                        if (currentQuestionId < quizQuestions.questionsPair.count() - 1){
+                                            currentQuestionId++
+                                            keepingAnswerState = false
+                                        }
+                                        else{
+                                            isGameEnded = true
+                                        }
+                                    }) {
+                                        Text("Далее")
+                                    }
+                                }
+                            }
                         }
                     }
 
-
+                    if (!isGameStarted){
+                        Button(modifier = Modifier, onClick = {
+                            isGameStarted = true
+                        }) {
+                            Text("Начать")
+                        }
+                    }
                 }
-
-                /*
-                Button(modifier = Modifier, onClick = {
-                }) {
-                    Text("Start")
-                }
-                */
-
             }
         }
     }
