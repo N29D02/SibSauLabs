@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun Lab4WidgetPreview(){
+
     Lab4Theme {
         Scaffold(Modifier.fillMaxSize(), topBar = {
             TopAppBar(colors = topAppBarColors(
@@ -54,7 +56,6 @@ fun Lab4WidgetPreview(){
                 title = { Text("GeoQuiz") })
 
         }){ innerPadding ->
-
             Column(
                 Modifier
                     .padding(innerPadding)
@@ -62,9 +63,40 @@ fun Lab4WidgetPreview(){
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally){
-                Button(modifier = Modifier, onClick = { /*TODO*/ }) {
+
+                Text("Question example", Modifier.padding(top = 24.dp))
+                Row(
+                    Modifier
+                        .padding(innerPadding)
+                        .padding(horizontal = 12.dp)
+                        .fillMaxSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ){
+                    Button(modifier = Modifier, onClick = {
+                    }) {
+                        Text("True")
+                    }
+                    Column(){
+                        Button(modifier = Modifier, onClick = {
+                        }) {
+                            Text("False")
+                        }
+                        Button(modifier = Modifier, onClick = {
+                        }) {
+                            Text("Next")
+                        }
+                    }
+
+
+                }
+
+                /*
+                Button(modifier = Modifier, onClick = {
+                }) {
                     Text("Start")
                 }
+                */
+
             }
         }
     }
