@@ -127,19 +127,21 @@ fun Lab4_2Widget(viewModel: QuizViewModel){
                                 }
                             }
                         }
-                        Button(modifier = Modifier, onClick = {
-                            if (viewModel.lossCheatCount()){
-                                val intent = Intent(context, CheatActivity::class.java).apply {
-                                    putExtra("currentQuestionId", viewModel.currentQuestionId)
+                        if (!viewModel.keepingAnswerState){
+                            Button(modifier = Modifier, onClick = {
+                                if (viewModel.lossCheatCount()){
+                                    val intent = Intent(context, CheatActivity::class.java).apply {
+                                        putExtra("currentQuestionId", viewModel.currentQuestionId)
+                                    }
+                                    context.startActivity(intent)
                                 }
-                                context.startActivity(intent)
-                            }
-                            else{
-                                Toast.makeText(context, "Попытки закончились", Toast.LENGTH_SHORT).show()
-                            }
+                                else{
+                                    Toast.makeText(context, "Попытки закончились", Toast.LENGTH_SHORT).show()
+                                }
 
-                        }) {
-                            Text("Подсказка")
+                            }) {
+                                Text("Подсказка")
+                            }
                         }
                     }
 

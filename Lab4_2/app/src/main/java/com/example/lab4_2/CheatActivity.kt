@@ -77,6 +77,8 @@ fun CheatWidget(viewModel: CheatViewModel){
                 {
                     Text(text = if (viewModel.isCheatShow) "Вернуться" else "Показать")
                 }
+
+                Text(text = "Версия Android API: ${viewModel.getAPILevel()}", Modifier.padding(top = 12.dp))
             }
         }
     }

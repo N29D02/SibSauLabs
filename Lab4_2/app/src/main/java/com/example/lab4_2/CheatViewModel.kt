@@ -1,5 +1,6 @@
 package com.example.lab4_2
 
+import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -14,6 +15,10 @@ class CheatViewModel: ViewModel() {
     fun getCheat(): Boolean{
         val quizQuestions = QuizQuestions()
         return quizQuestions.questionsPair[currentQuestionId].second
+    }
+
+    fun getAPILevel(): Int{
+        return Build.VERSION.SDK_INT
     }
 
     fun setCheatShow(){
