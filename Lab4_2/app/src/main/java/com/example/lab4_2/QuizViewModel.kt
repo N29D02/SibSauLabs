@@ -13,8 +13,18 @@ class QuizViewModel : ViewModel(){
     var keepingAnswerState by mutableStateOf(false)
     var isGameStarted by mutableStateOf(false)
     var isGameEnded by mutableStateOf(false)
+    var cheatCount by mutableIntStateOf(3)
 
     val quizQuestions = QuizQuestions()
+
+    fun lossCheatCount(): Boolean{
+        if (cheatCount > 0){
+            cheatCount--
+            return true
+        }
+        else
+            return false
+    }
 
     fun getCurrentQuestion(): String{
         return quizQuestions.questionsPair[currentQuestionId].first

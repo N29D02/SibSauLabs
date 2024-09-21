@@ -2,6 +2,7 @@ package com.example.lab4_2
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -127,10 +128,16 @@ fun Lab4_2Widget(viewModel: QuizViewModel){
                             }
                         }
                         Button(modifier = Modifier, onClick = {
-                            val intent = Intent(context, CheatActivity::class.java).apply {
-                                putExtra("currentQuestionId", viewModel.currentQuestionId)
+                            if (viewModel.lossCheatCount()){
+                                val intent = Intent(context, CheatActivity::class.java).apply {
+                                    putExtra("currentQuestionId", viewModel.currentQuestionId)
+                                }
+                                context.startActivity(intent)
                             }
-                            context.startActivity(intent)
+                            else{
+                                Toast.makeText(context, "Попытки закончились", Toast.LENGTH_SHORT).show()
+                            }
+
                         }) {
                             Text("Подсказка")
                         }
