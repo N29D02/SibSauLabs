@@ -1,5 +1,6 @@
 package com.example.lab4_2
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,9 +32,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import com.example.lab4_2.ui.theme.Lab4_2Theme
 import com.example.lab4_2.ui.theme.QuizQuestions
 
@@ -47,7 +50,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            Lab4WidgetPreview(quizViewModel)
+            Lab4_2Widget(quizViewModel)
         }
     }
 }
@@ -55,8 +58,9 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 //@Preview
 @Composable
-fun Lab4WidgetPreview(viewModel: QuizViewModel){
+fun Lab4_2Widget(viewModel: QuizViewModel){
     val quizQuestions = QuizQuestions()
+    val context = LocalContext.current
 
     Lab4_2Theme {
         Scaffold(Modifier.fillMaxSize(), topBar = {
@@ -91,7 +95,7 @@ fun Lab4WidgetPreview(viewModel: QuizViewModel){
                             Modifier
                                 .padding(innerPadding)
                                 .padding(horizontal = 12.dp)
-                                .fillMaxSize(),
+                                .fillMaxWidth(),
 
                             ){
                             if (!viewModel.keepingAnswerState){
@@ -121,6 +125,14 @@ fun Lab4WidgetPreview(viewModel: QuizViewModel){
                                     }
                                 }
                             }
+                        }
+                        Button(modifier = Modifier, onClick = {
+                            val intent = Intent(context, CheatActivity::class.java).apply {
+                                putExtra("currentQuestionId", viewModel.currentQuestionId)
+                            }
+                            context.startActivity(intent)
+                        }) {
+                            Text("Подсказка")
                         }
                     }
 
