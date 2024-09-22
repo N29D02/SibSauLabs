@@ -31,10 +31,10 @@ import androidx.compose.ui.unit.dp
 import com.example.lab5.ui.theme.Lab5Theme
 
 class PaymentActivity : ComponentActivity() {
-    private val currentQuestionId = intent.getFloatExtra("summaryPrice", 0f)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val currentQuestionId = intent.getFloatExtra("summaryPrice", 0f)
         setContent {
             PaymentWidget(currentQuestionId)
         }
