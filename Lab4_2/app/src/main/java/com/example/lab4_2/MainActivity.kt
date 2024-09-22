@@ -45,7 +45,6 @@ class MainActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-//@Preview
 @Composable
 fun Lab4_2Widget(viewModel: QuizViewModel){
     val quizQuestions = QuizQuestions()
