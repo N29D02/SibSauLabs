@@ -52,7 +52,7 @@ fun PaymentWidget(currentQuestionId: Float){
                 Modifier
                     .padding(innerPadding)
                     .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
-                Text("Итоговая цена: $currentQuestionId")
+                Text("Итоговая цена: ${Math.round(currentQuestionId)} руб.")
                 Spacer(modifier = Modifier.size(10.dp))
                 Button(onClick = {
                     (context as Activity).finish()

@@ -70,7 +70,7 @@ fun MainWidget(viewModel: MainActivityVM){
                 Text("Скидка: ${(viewModel.discountValue*100).toInt()}%")
                 Spacer(modifier = Modifier.size(10.dp))
                 Button(onClick = {
-                    val summaryPrice = viewModel.hoursRawValue.toInt()*2000*(1-viewModel.discountValue)
+                    val summaryPrice = viewModel.hoursRawValue.toInt()*2000*(1-(viewModel.discountValue*100).toInt()/100f)
                     val intent = Intent(context, PaymentActivity::class.java).apply {
                         putExtra("summaryPrice", summaryPrice)
                     }
