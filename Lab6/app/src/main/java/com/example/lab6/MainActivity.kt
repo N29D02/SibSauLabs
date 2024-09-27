@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.lab6.ui.theme.Lab6Theme
 
 class MainActivity : ComponentActivity() {
@@ -47,51 +48,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainWidget(mainViewModel)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainWidget(viewModel: MainActivityVM){
-    val context = LocalContext.current
-
-    Lab6Theme {
-        Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-            TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-                title = { Text("CriminalIntent") }, actions = {TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
-                {
-
-                }) {Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-                    Text("ADD REPORT")}})
-        }) { innerPadding ->
-            LazyColumn(
-                Modifier
-                    .padding(innerPadding).padding(top = 16.dp)
-                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp) )
-            {
-
+            val navController = rememberNavController()
+            Lab6Theme {
+                NavGraph(navController = navController, viewModel = mainViewModel)
             }
         }
     }
-}
-
-class FakeMainActivityVM : MainActivityVM() {
-    init {
-        hoursRawValue = "0"
-        discountValue = 0f
-    }
-}
-
-
-@Composable
-@Preview
-fun PreviewMainWidget() {
-    val viewModel = remember { FakeMainActivityVM() }
-
-    MainWidget(viewModel = viewModel)
 }

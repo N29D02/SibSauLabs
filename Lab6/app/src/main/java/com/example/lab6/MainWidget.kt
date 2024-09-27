@@ -23,21 +23,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.lab6.ui.theme.Lab6Theme
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CriminalReportWidget(){
+fun MainWidget(viewModel: MainActivityVM, navController: NavController){
     val context = LocalContext.current
-
     Lab6Theme {
         Scaffold(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), topBar = {
             TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 titleContentColor = MaterialTheme.colorScheme.primary,
             ),
-                title = { Text("CriminalReport") })
+                title = { Text("CriminalIntent") }, actions = {
+                    TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
+                {
+                    navController.navigate("criminalReport")
+                }) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                    Text("ADD REPORT")
+                    }
+                })
         }) { innerPadding ->
             LazyColumn(
                 Modifier
@@ -50,10 +57,18 @@ fun CriminalReportWidget(){
     }
 }
 
+class FakeMainActivityVM : MainActivityVM() {
+    init {
+        hoursRawValue = "0"
+        discountValue = 0f
+    }
+}
 
 
 @Composable
 @Preview
-fun PreviewCriminalReportWidget() {
-    CriminalReportWidget()
+fun PreviewMainWidget() {
+    val viewModel = remember { FakeMainActivityVM() }
+
+    //MainWidget(viewModel = viewModel)
 }
