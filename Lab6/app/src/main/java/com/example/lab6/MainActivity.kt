@@ -43,14 +43,36 @@ import com.example.lab6.ui.theme.Lab6Theme
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainActivityVM by viewModels()
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
+            /*
             Lab6Theme {
                 NavGraph(navController = navController, viewModel = mainViewModel)
+            }
+            */
+            Lab6Theme {
+                Scaffold(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), topBar = {
+                    TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        titleContentColor = MaterialTheme.colorScheme.primary,
+                    ),
+                        title = { Text("CriminalIntent") }, actions = {
+                            TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
+                            {
+                                navController.navigate("criminalReport")
+                            }) {
+                                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                                Text("ADD REPORT")
+                            }
+                        })
+                }) { innerPadding ->
+                    NavGraph(navController = navController, viewModel = mainViewModel, modifier = Modifier.padding(innerPadding))
+                }
             }
         }
     }

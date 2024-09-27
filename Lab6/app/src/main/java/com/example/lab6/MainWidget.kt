@@ -30,29 +30,13 @@ import com.example.lab6.ui.theme.Lab6Theme
 @Composable
 fun MainWidget(viewModel: MainActivityVM, navController: NavController){
     val context = LocalContext.current
-    Lab6Theme {
-        Scaffold(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), topBar = {
-            TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-                title = { Text("CriminalIntent") }, actions = {
-                    TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
-                {
-                    navController.navigate("criminalReport")
-                }) {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-                    Text("ADD REPORT")
-                    }
-                })
-        }) { innerPadding ->
-            LazyColumn(
-                Modifier
-                    .padding(innerPadding).padding(top = 16.dp)
-                    .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp) )
-            {
-
-            }
+    LazyColumn(
+        Modifier
+            .padding(top = 16.dp)
+            .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp) )
+    {
+        item{
+            Text("text_main")
         }
     }
 }
