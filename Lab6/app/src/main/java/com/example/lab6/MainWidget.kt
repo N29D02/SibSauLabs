@@ -41,18 +41,12 @@ fun MainWidget(viewModel: MainActivityVM, navController: NavController){
     }
 }
 
-class FakeMainActivityVM : MainActivityVM() {
-    init {
-        hoursRawValue = "0"
-        discountValue = 0f
-    }
-}
 
 
 @Composable
 @Preview
 fun PreviewMainWidget() {
-    val viewModel = remember { FakeMainActivityVM() }
+    //val viewModel = remember { FakeMainActivityVM() }
 
     //MainWidget(viewModel = viewModel)
 }

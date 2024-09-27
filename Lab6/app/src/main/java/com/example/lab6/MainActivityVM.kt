@@ -7,6 +7,5 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 open class MainActivityVM: ViewModel() {
-    var hoursRawValue by mutableStateOf("")
-    var discountValue by mutableFloatStateOf(0.1f)
+    var screenTitle by mutableStateOf("Criminal Intent")
 }

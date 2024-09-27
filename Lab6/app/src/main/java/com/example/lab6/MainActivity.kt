@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.lab6.ui.theme.Lab6Theme
 
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
+            val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
             /*
             Lab6Theme {
                 NavGraph(navController = navController, viewModel = mainViewModel)
@@ -61,13 +63,15 @@ class MainActivity : ComponentActivity() {
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
-                        title = { Text("CriminalIntent") }, actions = {
-                            TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
-                            {
-                                navController.navigate("criminalReport")
-                            }) {
-                                Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-                                Text("ADD REPORT")
+                        title = { Text("${currentRoute}") }, actions = {
+                            if (currentRoute == "Criminal Intent"){
+                                TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
+                                {
+                                    navController.navigate("Criminal Report")
+                                }) {
+                                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                                        Text("ADD REPORT")
+                                }
                             }
                         })
                 }) { innerPadding ->

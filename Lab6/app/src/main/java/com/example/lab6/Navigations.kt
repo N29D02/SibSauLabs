@@ -13,12 +13,12 @@ import androidx.navigation.compose.composable
 @Composable
 
 fun NavGraph(navController: NavHostController, viewModel: MainActivityVM, modifier: Modifier) {
-    NavHost(navController = navController, startDestination = "main", modifier = modifier) {
+    NavHost(navController = navController, startDestination = "Criminal Intent", modifier = modifier) {
         composable(
-            "main",
+            "Criminal Intent",
             enterTransition = {slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
             exitTransition = {slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth * 2 }, animationSpec = tween(500)) }
         ) { MainWidget(viewModel = viewModel, navController = navController) }
-        composable("criminalReport") { CriminalReportWidget() }
+        composable("Criminal Report") { CriminalReportWidget() }
     }
 }
