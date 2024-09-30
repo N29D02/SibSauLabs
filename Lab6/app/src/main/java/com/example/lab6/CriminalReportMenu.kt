@@ -27,7 +27,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedIconButton
@@ -49,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import kotlinx.coroutines.flow.MutableStateFlow
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,19 +99,35 @@ fun CriminalReportWidget(){
             }
         }
         TextField(modifier = Modifier.fillMaxWidth(), value = "", onValueChange = {}, placeholder = {Text("Title")})
-        Text("Details")
+        Text("Details", modifier = Modifier
+            .fillMaxWidth()
+            .align(Alignment.Start)
+            .padding(top = 16.dp))
         Spacer(modifier = Modifier
             .height(1.dp)
             .fillMaxWidth()
             .background(Color.Black))
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
-            Checkbox(checked = true, onCheckedChange = {})
+            Checkbox(checked = false, onCheckedChange = {})
             Text("Solved")
         }
-        Button(modifier = Modifier, onClick = {  }, shape = RoundedCornerShape(8.dp)) {
-            Text("Choose suspect")
+
+        var expanded by remember {mutableStateOf(false)}
+        var selectedText by remember {mutableStateOf("Choose suspect")}
+
+        ExposedDropdownMenuBox(expanded = false, onExpandedChange = {expanded = !expanded}) {
+            TextField(
+                value = selectedText,
+                onValueChange = {},
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor())
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(text = {Text("test1")}, onClick = { expanded = !expanded ; selectedText = "test1" })
+                DropdownMenuItem(text = {Text("test2")}, onClick = { expanded = !expanded ; selectedText = "test2" })
+                DropdownMenuItem(text = {Text("test3")}, onClick = { expanded = !expanded ; selectedText = "test3" })
+            }
         }
-        Button(modifier = Modifier, onClick = {  }, shape = RoundedCornerShape(8.dp)) {
+        Button(modifier = Modifier.fillMaxWidth(), onClick = {  }, shape = RoundedCornerShape(8.dp)) {
             Text("Send crime report")
         }
     }
