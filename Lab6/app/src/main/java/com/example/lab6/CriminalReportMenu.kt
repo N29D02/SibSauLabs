@@ -56,16 +56,19 @@ import coil.compose.rememberImagePainter
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
+class Test(){
+    internal var test = 0
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CriminalReportWidget(){
-    val context = LocalContext.current
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
 
+    val context = LocalContext.current
     val selectImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        selectedImageUri = uri
+        viewModel.selectedImageUri = uri
     }
 
     Column(
@@ -79,9 +82,9 @@ fun CriminalReportWidget(){
                 .clip(RoundedCornerShape(360.dp))
                 .background(Color.Gray)
         ) {
-            if (selectedImageUri != null) {
+            if (viewModel.selectedImageUri != null) {
                 Image(
-                    painter = rememberAsyncImagePainter(model = selectedImageUri),
+                    painter = rememberAsyncImagePainter(model = viewModel.selectedImageUri),
                     contentDescription = "Selected Image",
                     modifier = Modifier
                         .fillMaxSize(),
@@ -108,23 +111,20 @@ fun CriminalReportWidget(){
             .fillMaxWidth()
             .background(Color.Black))
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start){
-            Checkbox(checked = false, onCheckedChange = {})
+            Checkbox(checked = viewModel.solvedCheckState, onCheckedChange = {viewModel.solvedCheckState = !viewModel.solvedCheckState})
             Text("Solved")
         }
 
-        var expanded by remember {mutableStateOf(false)}
-        var selectedText by remember {mutableStateOf("Choose suspect")}
-
-        ExposedDropdownMenuBox(expanded = false, onExpandedChange = {expanded = !expanded}) {
+        ExposedDropdownMenuBox(expanded = viewModel.expandedState, onExpandedChange = {viewModel.expandedState = !viewModel.expandedState}) {
             TextField(
-                value = selectedText,
+                value = viewModel.chosenSuspect,
                 onValueChange = {},
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.expandedState) },
                 modifier = Modifier.menuAnchor())
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                DropdownMenuItem(text = {Text("test1")}, onClick = { expanded = !expanded ; selectedText = "test1" })
-                DropdownMenuItem(text = {Text("test2")}, onClick = { expanded = !expanded ; selectedText = "test2" })
-                DropdownMenuItem(text = {Text("test3")}, onClick = { expanded = !expanded ; selectedText = "test3" })
+            DropdownMenu(expanded = viewModel.expandedState, onDismissRequest = { viewModel.expandedState = false }) {
+                DropdownMenuItem(text = {Text("test1")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "test1" })
+                DropdownMenuItem(text = {Text("test2")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "test2" })
+                DropdownMenuItem(text = {Text("test3")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "test3" })
             }
         }
         Button(modifier = Modifier.fillMaxWidth(), onClick = {  }, shape = RoundedCornerShape(8.dp)) {
@@ -136,5 +136,5 @@ fun CriminalReportWidget(){
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 fun PreviewCriminalReportWidget() {
-    CriminalReportWidget()
+    //CriminalReportWidget()
 }

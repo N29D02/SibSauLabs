@@ -1,5 +1,6 @@
 package com.example.lab6
 
+import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -13,12 +14,15 @@ import androidx.navigation.compose.composable
 @Composable
 
 fun NavGraph(navController: NavHostController, viewModel: MainActivityVM, modifier: Modifier) {
+
     NavHost(navController = navController, startDestination = "Criminal Intent", modifier = modifier) {
         composable(
             "Criminal Intent",
             enterTransition = {slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
             exitTransition = {slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth * 2 }, animationSpec = tween(500)) }
-        ) { MainWidget(viewModel = viewModel, navController = navController) }
-        composable("Criminal Report") { CriminalReportWidget() }
+        ) {
+            MainWidget(viewModel = MainActivityVM(), navController = navController) }
+        //composable("Criminal Report") { CriminalReportWidget() }
+        composable("Criminal Report") { CriminalReportWidget(viewModel = CriminalReportMenuVM()) }
     }
 }
