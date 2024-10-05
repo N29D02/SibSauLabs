@@ -113,9 +113,9 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.expandedState) },
                 modifier = Modifier.menuAnchor())
             DropdownMenu(expanded = viewModel.expandedState, onDismissRequest = { viewModel.expandedState = false }) {
-                DropdownMenuItem(text = {Text("test1")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "test1" })
-                DropdownMenuItem(text = {Text("test2")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "test2" })
-                DropdownMenuItem(text = {Text("test3")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "test3" })
+                for(i in viewModel.suspectList.value!!){
+                    DropdownMenuItem(text = {Text("${i.name} ${i.surname}")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "${i.name} ${i.surname}" })
+                }
             }
         }
         Button(modifier = Modifier.fillMaxWidth(), onClick = {  }, shape = RoundedCornerShape(8.dp)) {

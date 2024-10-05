@@ -1,5 +1,6 @@
 package com.example.lab6
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -40,16 +41,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
 import com.example.lab6.ui.theme.Lab6Theme
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainActivityVM by viewModels()
+    object DatabaseProvider {
+        private var INSTANCE: CrimeDatabase? = null
+
+        fun getDatabase(context: Context): CrimeDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    CrimeDatabase::class.java,
+                    "crime_database"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
+            val context = LocalContext.current
             val navController = rememberNavController()
             val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
             /*
@@ -75,7 +95,8 @@ class MainActivity : ComponentActivity() {
                             }
                         })
                 }) { innerPadding ->
-                    NavGraph(navController = navController, viewModel = mainViewModel, modifier = Modifier.padding(innerPadding))
+                    DatabaseProvider.getDatabase(context).suspectDao().testInitialize()
+                    NavGraph(navController = navController, viewModel = mainViewModel, modifier = Modifier.padding(innerPadding), crimeDao = DatabaseProvider.getDatabase(context).crimeDao(), suspectDao = DatabaseProvider.getDatabase(context).suspectDao())
                 }
             }
         }
