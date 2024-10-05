@@ -13,4 +13,6 @@ class CriminalReportMenuVM: ViewModel() {
     var solvedCheckState by mutableStateOf(false)
     var chosenSuspect by mutableStateOf("")
     var expandedState by mutableStateOf(false)
+
+    
 }

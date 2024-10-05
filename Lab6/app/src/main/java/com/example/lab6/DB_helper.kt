@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 
 @Entity(tableName = "crime")
 data class Crime (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
     var title: String = "",
     var date: String = "",
@@ -46,43 +46,20 @@ interface CrimeDao {
 @Database(entities = [Crime::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun crimeDao(): CrimeDao?
-
-    // реализуем синглтон
-    companion object {
-        private var INSTANCE: AppDatabase? = null
-        fun getInstance(context: Context): AppDatabase {
-
-            synchronized(this) {
-                var instance = INSTANCE
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        AppDatabase::class.java,
-                        "User_database"
-
-                    ).fallbackToDestructiveMigration().build()
-                    INSTANCE = instance
-                }
-                return instance
-            }
-        }
-    }
 }
 
-class CrimeRepository(private val crimeDao: CrimeDao) {
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+object DatabaseProvider {
+    private var INSTANCE: CrimeDatabase? = null
 
-    val userList: LiveData<List<Crime>>? = crimeDao.all
-
-    fun addCrime(Crime: Crime) {
-        coroutineScope.launch(Dispatchers.IO) {
-            userDao.addUser(User)
-        }
-    }
-
-    fun deleteUser(id:Int) {
-        coroutineScope.launch(Dispatchers.IO) {
-            userDao.deleteUser(id)
+    fun getDatabase(context: Context): CrimeDatabase {
+        return INSTANCE ?: synchronized(this) {
+            val instance = Room.databaseBuilder(
+                context.applicationContext,
+                CrimeDatabase::class.java,
+                "crime_database"
+            ).build()
+            INSTANCE = instance
+            instance
         }
     }
 }
