@@ -1,12 +1,11 @@
 package com.example.lab6
 
-import android.graphics.Paint
+
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,16 +16,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,22 +28,20 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +53,8 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
     ) { uri: Uri? ->
         viewModel.selectedImageUri = uri
     }
+
+    val suspects by viewModel.suspects.observeAsState(emptyList())
 
     Column(
         Modifier
@@ -113,8 +107,11 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.expandedState) },
                 modifier = Modifier.menuAnchor())
             DropdownMenu(expanded = viewModel.expandedState, onDismissRequest = { viewModel.expandedState = false }) {
-                for(i in viewModel.suspectList.value!!){
-                    DropdownMenuItem(text = {Text("${i.name} ${i.surname}")}, onClick = { viewModel.expandedState = !viewModel.expandedState ; viewModel.chosenSuspect = "${i.name} ${i.surname}" })
+                suspects.forEach { suspect ->
+                    DropdownMenuItem(text = {Text("${suspect.firstName} ${suspect.lastName}")}, onClick = {
+                        viewModel.expandedState = false
+                        viewModel.chosenSuspect = "${suspect.firstName} ${suspect.lastName}"
+                    })
                 }
             }
         }

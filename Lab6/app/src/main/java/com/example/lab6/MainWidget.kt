@@ -40,13 +40,3 @@ fun MainWidget(viewModel: MainActivityVM, navController: NavController){
         }
     }
 }
-
-
-
-@Composable
-@Preview
-fun PreviewMainWidget() {
-    //val viewModel = remember { FakeMainActivityVM() }
-
-    //MainWidget(viewModel = viewModel)
-}

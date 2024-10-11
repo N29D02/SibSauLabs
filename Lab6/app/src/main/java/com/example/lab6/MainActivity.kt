@@ -3,6 +3,7 @@ package com.example.lab6
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,6 +32,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,44 +41,30 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import androidx.room.Room.databaseBuilder
 import com.example.lab6.ui.theme.Lab6Theme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
-    private val mainViewModel: MainActivityVM by viewModels()
-    object DatabaseProvider {
-        private var INSTANCE: CrimeDatabase? = null
-
-        fun getDatabase(context: Context): CrimeDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    CrimeDatabase::class.java,
-                    "crime_database"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
-
+    private lateinit var mainViewModel: MainActivityVM
+    private lateinit var criminalReportMenuVM: CriminalReportMenuVM
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
+        mainViewModel = ViewModelProvider(this).get(MainActivityVM::class.java)
+        criminalReportMenuVM = ViewModelProvider(this).get(CriminalReportMenuVM::class.java)
+
         enableEdgeToEdge()
         setContent {
-
             val context = LocalContext.current
             val navController = rememberNavController()
             val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-            /*
-            Lab6Theme {
-                NavGraph(navController = navController, viewModel = mainViewModel)
-            }
-            */
             Lab6Theme {
                 Scaffold(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), topBar = {
                     TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
@@ -89,16 +77,16 @@ class MainActivity : ComponentActivity() {
                                 {
                                     navController.navigate("Criminal Report")
                                 }) {
-                                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
-                                        Text("ADD REPORT")
+                                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                                    Text("ADD REPORT")
                                 }
                             }
                         })
                 }) { innerPadding ->
-                    DatabaseProvider.getDatabase(context).suspectDao().testInitialize()
-                    NavGraph(navController = navController, viewModel = mainViewModel, modifier = Modifier.padding(innerPadding), crimeDao = DatabaseProvider.getDatabase(context).crimeDao(), suspectDao = DatabaseProvider.getDatabase(context).suspectDao())
+                    NavGraph(navController = navController, mainViewModel = mainViewModel, criminalReportMenuVM = criminalReportMenuVM, modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
+
