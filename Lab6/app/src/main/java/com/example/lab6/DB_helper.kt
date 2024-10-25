@@ -22,6 +22,16 @@ data class Suspect(
     val lastName: String
 )
 
+@Entity(tableName = "crimes")
+data class Crime(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
+    var title: String = "",
+    var uri: String? = null,
+    var date: String = "",
+    var isSolved: Boolean = false,
+    var suspect_name: String = ""
+)
+
 @Dao
 interface SuspectDao {
     @Insert
@@ -29,11 +39,36 @@ interface SuspectDao {
 
     @Query("SELECT * FROM suspects")
     suspend fun getAllSuspects(): List<Suspect>
+
+    @Query("SELECT * FROM suspects")
+    fun getAllSuspectsLiveData(): LiveData<List<Suspect>>
+
+    @Query("DELETE FROM suspects")
+    suspend fun deleteAllSuspects()
 }
 
-@Database(entities = [Suspect::class], version = 2)
+@Dao
+interface CrimeDao {
+    @Insert
+    suspend fun insertCrime(crime: Crime)
+
+    @Query("SELECT * FROM crimes")
+    suspend fun getAllCrimes(): List<Crime>
+
+    @Query("SELECT * FROM crimes")
+    fun getAllCrimesLiveData(): LiveData<List<Crime>>
+
+    @Query("DELETE FROM crimes")
+    suspend fun deleteAllCrimes()
+
+    @Query("DELETE FROM crimes WHERE ID = :crimeId")
+    suspend fun deleteCrimeById(crimeId: Long)
+}
+
+@Database(entities = [Suspect::class, Crime::class], version = 6)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun suspectDao(): SuspectDao
+    abstract fun crimeDao(): CrimeDao
 
     companion object {
         @Volatile
@@ -45,7 +80,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
-                ).fallbackToDestructiveMigration().build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

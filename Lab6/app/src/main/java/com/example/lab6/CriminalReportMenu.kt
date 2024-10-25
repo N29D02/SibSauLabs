@@ -1,7 +1,9 @@
 package com.example.lab6
 
 
+import android.app.Activity
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -18,9 +20,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +35,9 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -39,13 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
+fun CriminalReportWidget(viewModel: CriminalReportMenuVM, navController: NavController){
 
     val context = LocalContext.current
     val selectImageLauncher = rememberLauncherForActivityResult(
@@ -53,8 +62,6 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
     ) { uri: Uri? ->
         viewModel.selectedImageUri = uri
     }
-
-    val suspects by viewModel.suspects.observeAsState(emptyList())
 
     Column(
         Modifier
@@ -86,7 +93,7 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
                 Icon(modifier = Modifier.size(36.dp), imageVector = Icons.Outlined.Add, contentDescription = "IconPhotoAdd", tint = Color.White)
             }
         }
-        TextField(modifier = Modifier.fillMaxWidth(), value = "", onValueChange = {}, placeholder = {Text("Title")})
+        TextField(modifier = Modifier.fillMaxWidth(), value = viewModel.title, onValueChange = {viewModel.title = it}, placeholder = {Text("Title")})
         Text("Details", modifier = Modifier
             .fillMaxWidth()
             .align(Alignment.Start)
@@ -99,7 +106,6 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
             Checkbox(checked = viewModel.solvedCheckState, onCheckedChange = {viewModel.solvedCheckState = !viewModel.solvedCheckState})
             Text("Solved")
         }
-
         ExposedDropdownMenuBox(expanded = viewModel.expandedState, onExpandedChange = {viewModel.expandedState = !viewModel.expandedState}) {
             TextField(
                 value = viewModel.chosenSuspect,
@@ -107,7 +113,9 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.expandedState) },
                 modifier = Modifier.menuAnchor())
             DropdownMenu(expanded = viewModel.expandedState, onDismissRequest = { viewModel.expandedState = false }) {
-                suspects.forEach { suspect ->
+                Log.d("test", "${viewModel.suspects}")
+                viewModel.suspects.forEach { suspect ->
+                    Log.d("test", "${suspect.firstName}")
                     DropdownMenuItem(text = {Text("${suspect.firstName} ${suspect.lastName}")}, onClick = {
                         viewModel.expandedState = false
                         viewModel.chosenSuspect = "${suspect.firstName} ${suspect.lastName}"
@@ -115,14 +123,48 @@ fun CriminalReportWidget(viewModel: CriminalReportMenuVM){
                 }
             }
         }
-        Button(modifier = Modifier.fillMaxWidth(), onClick = {  }, shape = RoundedCornerShape(8.dp)) {
+
+        TextField(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            value = viewModel.selectedDate,
+            onValueChange = {},
+            readOnly = true,
+            placeholder = { Text("Select Date") },
+            trailingIcon = {
+                IconButton(onClick = { viewModel.showDatePicker = true }) {
+                    Icon(imageVector = Icons.Default.DateRange, contentDescription = "Select Date")
+                }
+            }
+        )
+
+        if (viewModel.showDatePicker) {
+            val datePickerState = rememberDatePickerState()
+            DatePickerDialog(
+                onDismissRequest = { viewModel.showDatePicker = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val selectedDate = datePickerState.selectedDateMillis?.let { Date(it) }
+                        selectedDate?.let { viewModel.setSelectedDate(it) }
+                        viewModel.showDatePicker = false
+                    }) {
+                        Text("OK")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.showDatePicker = false }) {
+                        Text("Cancel")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
+        Button(modifier = Modifier.fillMaxWidth(), onClick = {
+            viewModel.addCrime()
+            navController.popBackStack()
+        }, shape = RoundedCornerShape(8.dp)) {
             Text("Send crime report")
         }
     }
-}
-
-@Composable
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
-fun PreviewCriminalReportWidget() {
-    //CriminalReportWidget()
 }

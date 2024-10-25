@@ -22,7 +22,7 @@ fun NavGraph(navController: NavHostController, mainViewModel: MainActivityVM, cr
             MainWidget(viewModel = mainViewModel, navController = navController)
         }
         composable("Criminal Report") {
-            CriminalReportWidget(viewModel = criminalReportMenuVM)
+            CriminalReportWidget(viewModel = criminalReportMenuVM, navController = navController)
         }
     }
 }

@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -16,12 +18,21 @@ open class MainActivityVM(application: Application): AndroidViewModel(applicatio
     var screenTitle by mutableStateOf("Criminal Intent")
 
     private val suspectDao = AppDatabase.getDatabase(application).suspectDao()
+    private val crimeDao = AppDatabase.getDatabase(application).crimeDao()
+
+    val crimes: LiveData<List<Crime>> = crimeDao.getAllCrimesLiveData()
 
     init {
         viewModelScope.launch {
-            suspectDao.insertSuspect(Suspect(firstName = "John", lastName = "Doe"))
-            suspectDao.insertSuspect(Suspect(firstName = "Jane", lastName = "Smith"))
-            suspectDao.insertSuspect(Suspect(firstName = "Alice", lastName = "Johnson"))
+
         }
     }
+
+    fun deleteCrime(crime: Crime) {
+        viewModelScope.launch {
+            crimeDao.deleteCrimeById(crime.id)
+        }
+    }
+
+
 }
