@@ -51,16 +51,19 @@ import com.example.lab7.ui.theme.Lab7Theme
 import com.example.lab7.views.FlickrPhotosGrid
 import com.example.lab7.navigations.NavGraph
 import com.example.lab7.viewModels.GalleryActivityVM
+import com.example.lab7.viewModels.SettingsActivityVM
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var galleryActivityVM: GalleryActivityVM
+    private lateinit var settingActivityVM: SettingsActivityVM
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         galleryActivityVM = ViewModelProvider(this)[GalleryActivityVM::class.java]
+        settingActivityVM = ViewModelProvider(this)[SettingsActivityVM::class.java]
 
         enableEdgeToEdge()
         setContent {
@@ -89,7 +92,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
                                 {
-                                    navController.navigate("Galery")
+                                    navController.navigate("Settings")
                                 }) {
                                     Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
                                 }
@@ -99,7 +102,7 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         navController = navController,
                         modifier = Modifier.padding(innerPadding),
-                        galleryActivityVM = galleryActivityVM)
+                        galleryActivityVM = galleryActivityVM, settingsActivityVM = settingActivityVM)
                 }
             }
         }

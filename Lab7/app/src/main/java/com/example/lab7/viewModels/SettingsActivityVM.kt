@@ -13,15 +13,12 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class SettingsActivityVM(application: Application) : AndroidViewModel(application) {
-    private var useNotification = false;
+    private val _useNotification = MutableStateFlow(false)
+    val useNotification: StateFlow<Boolean> = _useNotification
 
-    private fun settingNotifications() {
+    fun settingNotifications() {
         viewModelScope.launch {
-            useNotification = !useNotification
+            _useNotification.value = !_useNotification.value
         }
-    }
-
-    private fun gettingNotification(): Boolean {
-        return useNotification
     }
 }
