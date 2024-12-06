@@ -10,19 +10,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.lab7.API.Photo
 import com.example.lab7.viewModels.GalleryActivityVM
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
-fun FlickrPhotosGrid(viewModel: GalleryActivityVM) {
+fun GalleryScreen(viewModel: GalleryActivityVM) {
     val photos by viewModel.photos.collectAsState()
+    var isRefreshing by remember { mutableStateOf(false) }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        contentPadding = PaddingValues(8.dp)
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing),
+        onRefresh = {
+            isRefreshing = true
+            viewModel.loadPhotos()
+            isRefreshing = false
+        }
     ) {
-        items(photos) { photo ->
-            PhotoItem(photo)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = PaddingValues(8.dp)
+        ) {
+            items(photos) { photo ->
+                PhotoItem(photo)
+            }
         }
     }
 }

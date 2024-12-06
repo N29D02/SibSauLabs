@@ -20,7 +20,7 @@ class GalleryActivityVM(application: Application) : AndroidViewModel(application
         loadPhotos()
     }
 
-    private fun loadPhotos() {
+    fun loadPhotos() {
         viewModelScope.launch {
             try {
                 val response: Response<FlickrResponse> = RetrofitClient.flickrApiService.getRecentPhotos()

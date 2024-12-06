@@ -1,9 +1,13 @@
 package com.example.lab7
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -40,23 +44,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.lab7.API.Photo
 import com.example.lab7.API.RetrofitClient
+import com.example.lab7.WorkManager.ImageCheckWorker
 import com.example.lab7.ui.theme.Lab7Theme
-import com.example.lab7.views.FlickrPhotosGrid
 import com.example.lab7.navigations.NavGraph
 import com.example.lab7.viewModels.GalleryActivityVM
 import com.example.lab7.viewModels.SettingsActivityVM
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
+import android.Manifest
 
 class MainActivity : ComponentActivity() {
     private lateinit var galleryActivityVM: GalleryActivityVM
     private lateinit var settingActivityVM: SettingsActivityVM
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,10 +118,32 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         navController = navController,
                         modifier = Modifier.padding(innerPadding),
-                        galleryActivityVM = galleryActivityVM, settingsActivityVM = settingActivityVM)
+                        galleryActivityVM = galleryActivityVM,
+                        settingsActivityVM = settingActivityVM
+                    )
                 }
             }
         }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        scheduleImageCheck(this)
+    }
+
+    private fun scheduleImageCheck(context: Context) {
+        val workRequest = PeriodicWorkRequestBuilder<ImageCheckWorker>(5, TimeUnit.SECONDS)
+            .build()
+        Log.d("test", "Schedule start")
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "ImageCheckWork",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest
+        )
     }
 }
-
