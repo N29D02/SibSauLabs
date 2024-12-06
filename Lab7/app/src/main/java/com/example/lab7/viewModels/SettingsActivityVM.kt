@@ -1,6 +1,7 @@
 package com.example.lab7.viewModels
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,12 +14,14 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class SettingsActivityVM(application: Application) : AndroidViewModel(application) {
-    private val _useNotification = MutableStateFlow(false)
+    private val sharedPreferences = application.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    private val _useNotification = MutableStateFlow(sharedPreferences.getBoolean("useNotification", false))
     val useNotification: StateFlow<Boolean> = _useNotification
 
     fun settingNotifications() {
         viewModelScope.launch {
             _useNotification.value = !_useNotification.value
+            sharedPreferences.edit().putBoolean("useNotification", _useNotification.value).apply()
         }
     }
 }
