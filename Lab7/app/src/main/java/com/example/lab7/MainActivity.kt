@@ -63,20 +63,27 @@ import com.example.lab7.viewModels.SettingsActivityVM
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 
 class MainActivity : ComponentActivity() {
     private lateinit var galleryActivityVM: GalleryActivityVM
     private lateinit var settingActivityVM: SettingsActivityVM
 
+
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        
+
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        createNotificationChannel(this)
 
         galleryActivityVM = ViewModelProvider(this)[GalleryActivityVM::class.java]
         settingActivityVM = ViewModelProvider(this)[SettingsActivityVM::class.java]
@@ -145,5 +152,18 @@ class MainActivity : ComponentActivity() {
             ExistingPeriodicWorkPolicy.REPLACE,
             workRequest
         )
+    }
+}
+
+fun createNotificationChannel(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val name = "Channel Name"
+        val descriptionText = "Channel Description"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("channel_id", name, importance).apply {
+            description = descriptionText
+        }
+        val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }

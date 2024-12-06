@@ -10,8 +10,11 @@ import androidx.work.WorkerParameters
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.lab7.API.FlickrResponse
+import com.example.lab7.API.Photo
 import com.example.lab7.API.RetrofitClient
 import com.example.lab7.R
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import retrofit2.Response
 
 class ImageCheckWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
@@ -26,8 +29,15 @@ class ImageCheckWorker(context: Context, params: WorkerParameters) : CoroutineWo
             val response: Response<FlickrResponse> = RetrofitClient.flickrApiService.getRecentPhotos()
             if (response.isSuccessful && response.body()?.photos?.photo?.isNotEmpty() == true) {
                 if (useNotification) {
-                    Log.d("test", "do Work try2")
-                    sendNotification(applicationContext, "Новые фотографии", "Появились новые фотографии на сервере")
+                    val photos = response.body()?.photos?.photo ?: emptyList()
+                    val lastPhotos = getLastPhotos(applicationContext)
+
+                    if (photos != lastPhotos) {
+                        saveLastPhotos(applicationContext, photos)
+                        if (useNotification) {
+                            sendNotification(applicationContext, "Новые фотографии", "Появились новые фотографии на сервере")
+                        }
+                    }
                 }
                 Log.d("test", "do Work try3")
                 return Result.success()
@@ -66,5 +76,17 @@ class ImageCheckWorker(context: Context, params: WorkerParameters) : CoroutineWo
         }
         Log.d("test", "Notify sent")
         notificationManager.notify(1, notification)
+    }
+
+    private fun getLastPhotos(context: Context): List<Photo> {
+        val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString("lastPhotos", null)
+        return json?.let { Gson().fromJson(it, object : TypeToken<List<Photo>>() {}.type) } ?: emptyList()
+    }
+
+    private fun saveLastPhotos(context: Context, photos: List<Photo>) {
+        val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val json = Gson().toJson(photos)
+        sharedPreferences.edit().putString("lastPhotos", json).apply()
     }
 }
