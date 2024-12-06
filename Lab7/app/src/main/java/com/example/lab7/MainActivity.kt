@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -78,7 +80,18 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("Galery")
                                 }) {
                                     Icon(imageVector = Icons.Default.List, contentDescription = "Stored")
-                                    Text("Stored")
+                                }
+                                TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
+                                {
+                                    navController.navigate("Galery")
+                                }) {
+                                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                                }
+                                TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
+                                {
+                                    navController.navigate("Galery")
+                                }) {
+                                    Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
                                 }
                             }
                         })

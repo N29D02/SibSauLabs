@@ -23,7 +23,7 @@ class GalleryActivityVM(application: Application) : AndroidViewModel(application
     private fun loadPhotos() {
         viewModelScope.launch {
             try {
-                val response: Response<FlickrResponse> = RetrofitClient.flickrApiService.getRecentPhotos(apiKey = "dbe2234de5e71758f77eda26b415fe41")
+                val response: Response<FlickrResponse> = RetrofitClient.flickrApiService.getRecentPhotos()
                 if (response.isSuccessful) {
                     _photos.value = response.body()?.photos?.photo ?: emptyList()
                 }

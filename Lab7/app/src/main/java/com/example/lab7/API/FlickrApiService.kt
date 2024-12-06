@@ -8,7 +8,7 @@ interface FlickrApiService {
     @GET("services/rest/")
     suspend fun getRecentPhotos(
         @Query("method") method: String = "flickr.photos.getRecent",
-        @Query("api_key") apiKey: String,
+        @Query("api_key") apiKey: String = "dbe2234de5e71758f77eda26b415fe41",
         @Query("format") format: String = "json",
         @Query("nojsoncallback") noJsonCallback: Int = 1
     ): Response<FlickrResponse>
