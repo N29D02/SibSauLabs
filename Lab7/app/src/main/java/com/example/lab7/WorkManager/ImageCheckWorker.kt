@@ -16,6 +16,7 @@ import com.example.lab7.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Response
+import kotlin.random.Random
 
 class ImageCheckWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
@@ -75,7 +76,7 @@ class ImageCheckWorker(context: Context, params: WorkerParameters) : CoroutineWo
             return
         }
         Log.d("test", "Notify sent")
-        notificationManager.notify(1, notification)
+        notificationManager.notify(Random.nextInt(), notification)
     }
 
     private fun getLastPhotos(context: Context): List<Photo> {
