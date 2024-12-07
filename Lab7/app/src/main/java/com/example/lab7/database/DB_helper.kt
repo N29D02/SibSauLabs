@@ -35,11 +35,17 @@ interface PhotoDao {
     @Query("SELECT * FROM photos")
     suspend fun getAllPhotos(): List<Photo>
 
+    @Query("SELECT * FROM photos")
+    fun getAllPhotosLiveData(): LiveData<List<Photo>>
+
     @Query("SELECT * FROM photos WHERE id = :photoId")
     suspend fun getPhotoById(photoId: String): Photo?
 
     @Query("DELETE FROM photos WHERE id = :photoId")
     suspend fun deletePhotoById(photoId: String)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM photos WHERE id = :photoId)")
+    suspend fun isPhotoInFavorites(photoId: String): Boolean
 }
 
 @Database(entities = [Photo::class], version = 1)

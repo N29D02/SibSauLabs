@@ -32,4 +32,8 @@ class GalleryActivityVM(application: Application) : AndroidViewModel(application
             }
         }
     }
+
+    fun getPhotoById(photoId: String): Photo? {
+        return _photos.value.find { it.id == photoId }
+    }
 }

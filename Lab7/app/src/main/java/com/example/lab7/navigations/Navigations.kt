@@ -11,8 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.lab7.API.Photo
+import com.example.lab7.FavoritesScreen
+import com.example.lab7.PhotoDetailScreen
+import com.example.lab7.database.PhotoDao
 import com.example.lab7.viewModels.GalleryActivityVM
 import com.example.lab7.viewModels.SearchActivityVM
 import com.example.lab7.viewModels.SettingsActivityVM
@@ -25,21 +31,25 @@ fun NavGraph(navController: NavHostController,
              modifier: Modifier,
              galleryActivityVM: GalleryActivityVM,
              settingsActivityVM: SettingsActivityVM,
-             searchActivityVM: SearchActivityVM
+             searchActivityVM: SearchActivityVM,
+             onPhotoClick: (Photo) -> Unit,
+             onAddToFavorites: (Photo) -> Unit,
+             photoDao: PhotoDao,
+             onRemoveFromFavorites: (Photo) -> Unit
 ) {
-    NavHost(navController = navController, startDestination = "Galery", modifier = modifier) {
+    NavHost(navController = navController, startDestination = "Gallery", modifier = modifier) {
         composable(
-            "Galery",
+            "Gallery",
             enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth * 2 }, animationSpec = tween(500)) }
         ) {
-            GalleryScreen(galleryActivityVM)
+            GalleryScreen(galleryActivityVM, onPhotoClick)
         }
         composable("Stored",
             enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth * 2 }, animationSpec = tween(500)) }
         ) {
-
+            FavoritesScreen(photoDao, onPhotoClick)
         }
         composable("Settings",
             enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
@@ -51,7 +61,19 @@ fun NavGraph(navController: NavHostController,
             enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth * 2 }, animationSpec = tween(500)) }
         ) {
-            SearchScreen(searchActivityVM)
+            SearchScreen(searchActivityVM, onPhotoClick)
+        }
+        composable(
+            "PhotoDetail/{photoId}",
+            arguments = listOf(navArgument("photoId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val photoId = backStackEntry.arguments?.getString("photoId")
+            val photo = photoId?.let { galleryActivityVM.getPhotoById(it) }
+            if (photo != null) {
+                PhotoDetailScreen(photo, photoDao, onAddToFavorites, onRemoveFromFavorites)
+            } else {
+                Text("Photo not found")
+            }
         }
     }
 }

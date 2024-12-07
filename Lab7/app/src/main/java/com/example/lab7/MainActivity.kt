@@ -53,11 +53,17 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.lab7.WorkManager.ImageCheckWorker
+import com.example.lab7.database.AppDatabase
+import com.example.lab7.database.PhotoDao
+import com.example.lab7.database.Photo
 import com.example.lab7.navigations.NavGraph
 import com.example.lab7.ui.theme.Lab7Theme
 import com.example.lab7.viewModels.GalleryActivityVM
 import com.example.lab7.viewModels.SearchActivityVM
 import com.example.lab7.viewModels.SettingsActivityVM
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 
@@ -65,6 +71,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var galleryActivityVM: GalleryActivityVM
     private lateinit var settingActivityVM: SettingsActivityVM
     private lateinit var searchActivityVM: SearchActivityVM
+    private lateinit var photoDao: PhotoDao
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -73,7 +80,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showIgnoreBatteryOpt()
@@ -82,6 +89,7 @@ class MainActivity : ComponentActivity() {
         galleryActivityVM = ViewModelProvider(this)[GalleryActivityVM::class.java]
         settingActivityVM = ViewModelProvider(this)[SettingsActivityVM::class.java]
         searchActivityVM = ViewModelProvider(this)[SearchActivityVM::class.java]
+        photoDao = AppDatabase.getDatabase(this).photoDao()
 
         enableEdgeToEdge()
         setContent {
@@ -97,10 +105,10 @@ class MainActivity : ComponentActivity() {
                         titleContentColor = MaterialTheme.colorScheme.primary,
                     ),
                         title = { Text("${currentRoute}") }, actions = {
-                            if (currentRoute == "Galery"){
+                            if (currentRoute == "Gallery"){
                                 TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
                                 {
-                                    navController.navigate("Galery")
+                                    navController.navigate("Stored")
                                 }) {
                                     Icon(imageVector = Icons.Default.List, contentDescription = "Stored")
                                 }
@@ -142,7 +150,23 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         galleryActivityVM = galleryActivityVM,
                         settingsActivityVM = settingActivityVM,
-                        searchActivityVM = searchActivityVM
+                        searchActivityVM = searchActivityVM,
+                        onPhotoClick = { photo ->
+                            navController.navigate("PhotoDetail/${photo.id}")
+                        },
+                        photoDao = photoDao,
+                        onRemoveFromFavorites = { photo ->
+                            GlobalScope.launch {
+                                val dbPhoto = apiPhotoToDbPhoto(photo)
+                                photoDao.deletePhotoById(dbPhoto.id)
+                            }
+                        },
+                        onAddToFavorites = { photo ->
+                            GlobalScope.launch {
+                                val dbPhoto = apiPhotoToDbPhoto(photo)
+                                photoDao.insertPhoto(dbPhoto)
+                            }
+                        }
                     )
                 }
             }
@@ -192,4 +216,27 @@ fun createNotificationChannel(context: Context) {
         val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
+}
+
+fun apiPhotoToDbPhoto(apiPhoto: com.example.lab7.API.Photo): com.example.lab7.database.Photo {
+    return com.example.lab7.database.Photo(
+        id = apiPhoto.id,
+        owner = apiPhoto.owner,
+        secret = apiPhoto.secret,
+        server = apiPhoto.server,
+        farm = apiPhoto.farm,
+        title = apiPhoto.title,
+        url = "https://farm${apiPhoto.farm}.staticflickr.com/${apiPhoto.server}/${apiPhoto.id}_${apiPhoto.secret}.jpg"
+    )
+}
+
+fun dbPhotoToApiPhoto(dbPhoto: com.example.lab7.database.Photo): com.example.lab7.API.Photo {
+    return com.example.lab7.API.Photo(
+        id = dbPhoto.id,
+        owner = dbPhoto.owner,
+        secret = dbPhoto.secret,
+        server = dbPhoto.server,
+        farm = dbPhoto.farm,
+        title = dbPhoto.title
+    )
 }
