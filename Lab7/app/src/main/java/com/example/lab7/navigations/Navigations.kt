@@ -14,12 +14,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.lab7.viewModels.GalleryActivityVM
+import com.example.lab7.viewModels.SearchActivityVM
 import com.example.lab7.viewModels.SettingsActivityVM
 import com.example.lab7.views.GalleryScreen
+import com.example.lab7.views.SearchScreen
 import com.example.lab7.views.SettingsActivity
 
 @Composable
-fun NavGraph(navController: NavHostController,modifier: Modifier, galleryActivityVM: GalleryActivityVM, settingsActivityVM: SettingsActivityVM) {
+fun NavGraph(navController: NavHostController,
+             modifier: Modifier,
+             galleryActivityVM: GalleryActivityVM,
+             settingsActivityVM: SettingsActivityVM,
+             searchActivityVM: SearchActivityVM
+) {
     NavHost(navController = navController, startDestination = "Galery", modifier = modifier) {
         composable(
             "Galery",
@@ -28,7 +35,10 @@ fun NavGraph(navController: NavHostController,modifier: Modifier, galleryActivit
         ) {
             GalleryScreen(galleryActivityVM)
         }
-        composable("Stored") {
+        composable("Stored",
+            enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth * 2 }, animationSpec = tween(500)) }
+        ) {
 
         }
         composable("Settings",
@@ -37,8 +47,11 @@ fun NavGraph(navController: NavHostController,modifier: Modifier, galleryActivit
         ) {
             SettingsActivity(settingsActivityVM)
         }
-        composable("Search") {
-
+        composable("Search",
+            enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth * 2 }, animationSpec = tween(500)) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth * 2 }, animationSpec = tween(500)) }
+        ) {
+            SearchScreen(searchActivityVM)
         }
     }
 }

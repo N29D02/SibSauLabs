@@ -12,6 +12,15 @@ interface FlickrApiService {
         @Query("format") format: String = "json",
         @Query("nojsoncallback") noJsonCallback: Int = 1
     ): Response<FlickrResponse>
+
+    @GET("services/rest/")
+    suspend fun searchPhotos(
+        @Query("method") method: String = "flickr.photos.search",
+        @Query("api_key") apiKey: String = "dbe2234de5e71758f77eda26b415fe41",
+        @Query("text") query: String,
+        @Query("format") format: String = "json",
+        @Query("nojsoncallback") noJsonCallback: Int = 1
+    ): Response<FlickrResponse>
 }
 
 data class FlickrResponse(

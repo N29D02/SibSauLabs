@@ -18,6 +18,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,11 +32,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -47,6 +56,7 @@ import com.example.lab7.WorkManager.ImageCheckWorker
 import com.example.lab7.navigations.NavGraph
 import com.example.lab7.ui.theme.Lab7Theme
 import com.example.lab7.viewModels.GalleryActivityVM
+import com.example.lab7.viewModels.SearchActivityVM
 import com.example.lab7.viewModels.SettingsActivityVM
 import java.util.concurrent.TimeUnit
 
@@ -54,8 +64,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : ComponentActivity() {
     private lateinit var galleryActivityVM: GalleryActivityVM
     private lateinit var settingActivityVM: SettingsActivityVM
-
-
+    private lateinit var searchActivityVM: SearchActivityVM
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -63,6 +72,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +81,7 @@ class MainActivity : ComponentActivity() {
 
         galleryActivityVM = ViewModelProvider(this)[GalleryActivityVM::class.java]
         settingActivityVM = ViewModelProvider(this)[SettingsActivityVM::class.java]
+        searchActivityVM = ViewModelProvider(this)[SearchActivityVM::class.java]
 
         enableEdgeToEdge()
         setContent {
@@ -95,7 +106,7 @@ class MainActivity : ComponentActivity() {
                                 }
                                 TextButton(modifier = Modifier.background(color = Color.Transparent), onClick =
                                 {
-                                    navController.navigate("Galery")
+                                    navController.navigate("Search")
                                 }) {
                                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                                 }
@@ -106,13 +117,32 @@ class MainActivity : ComponentActivity() {
                                     Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
                                 }
                             }
+                            if (currentRoute == "Search"){
+                                var searchText by remember { mutableStateOf("") }
+                                TextField(
+                                    value = searchText,
+                                    onValueChange = { searchText = it },
+                                    label = { Text("Enter text") },
+                                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+                                    modifier = Modifier.background(color = Color.Transparent),
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedContainerColor = Color.Transparent,
+                                        disabledContainerColor = Color.Transparent,
+                                    )
+                                )
+                                LaunchedEffect(searchText) {
+                                    searchActivityVM.searchPhotos(searchText)
+                                }
+                            }
                         })
                 }) { innerPadding ->
                     NavGraph(
                         navController = navController,
                         modifier = Modifier.padding(innerPadding),
                         galleryActivityVM = galleryActivityVM,
-                        settingsActivityVM = settingActivityVM
+                        settingsActivityVM = settingActivityVM,
+                        searchActivityVM = searchActivityVM
                     )
                 }
             }
@@ -135,18 +165,14 @@ class MainActivity : ComponentActivity() {
         val intent = Intent()
         val pm = getSystemService(POWER_SERVICE) as PowerManager
         if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-            Log.d("test5", "showIgnoreBatteryOpt: NOT ignoring")
             intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
             intent.setData(Uri.parse("package:$packageName"))
             startActivity(intent)
-        } else {
-            Log.d("test5", "showIgnoreBatteryOpt: ignoring")
         }
     }
     private fun scheduleImageCheck(context: Context) {
         val workRequest = PeriodicWorkRequestBuilder<ImageCheckWorker>(5, TimeUnit.SECONDS)
             .build()
-        Log.d("test", "Schedule start")
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
             "ImageCheckWork",
             ExistingPeriodicWorkPolicy.REPLACE,
