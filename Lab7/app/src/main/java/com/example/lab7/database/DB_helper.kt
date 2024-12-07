@@ -9,66 +9,42 @@ import androidx.room.Database
 import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Update
 
-@Entity(tableName = "suspects")
-data class Suspect(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val firstName: String,
-    val lastName: String
-)
-
-@Entity(tableName = "crimes")
-data class Crime(
-    @PrimaryKey(autoGenerate = true) var id: Long = 0,
-    var title: String = "",
-    var uri: String? = null,
-    var date: String = "",
-    var isSolved: Boolean = false,
-    var suspect_name: String = ""
+@Entity(tableName = "photos")
+data class Photo(
+    @PrimaryKey val id: String,
+    val owner: String,
+    val secret: String,
+    val server: String,
+    val farm: Int,
+    val title: String,
+    val url: String
 )
 
 @Dao
-interface SuspectDao {
-    @Insert
-    suspend fun insertSuspect(suspect: Suspect)
+interface PhotoDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPhoto(photo: Photo)
 
-    @Query("SELECT * FROM suspects")
-    suspend fun getAllSuspects(): List<Suspect>
+    @Query("SELECT * FROM photos")
+    suspend fun getAllPhotos(): List<Photo>
 
-    @Query("SELECT * FROM suspects")
-    fun getAllSuspectsLiveData(): LiveData<List<Suspect>>
+    @Query("SELECT * FROM photos WHERE id = :photoId")
+    suspend fun getPhotoById(photoId: String): Photo?
 
-    @Query("DELETE FROM suspects")
-    suspend fun deleteAllSuspects()
+    @Query("DELETE FROM photos WHERE id = :photoId")
+    suspend fun deletePhotoById(photoId: String)
 }
 
-@Dao
-interface CrimeDao {
-    @Insert
-    suspend fun insertCrime(crime: Crime)
-
-    @Query("SELECT * FROM crimes")
-    suspend fun getAllCrimes(): List<Crime>
-
-    @Query("SELECT * FROM crimes")
-    fun getAllCrimesLiveData(): LiveData<List<Crime>>
-
-    @Query("DELETE FROM crimes")
-    suspend fun deleteAllCrimes()
-
-    @Query("DELETE FROM crimes WHERE ID = :crimeId")
-    suspend fun deleteCrimeById(crimeId: Long)
-}
-
-@Database(entities = [Suspect::class, Crime::class], version = 1)
+@Database(entities = [Photo::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun suspectDao(): SuspectDao
-    abstract fun crimeDao(): CrimeDao
+    abstract fun photoDao(): PhotoDao
 
     companion object {
         @Volatile
