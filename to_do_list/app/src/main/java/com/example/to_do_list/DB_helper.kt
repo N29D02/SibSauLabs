@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.*
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "tasks")
 data class Task(
@@ -15,13 +16,13 @@ data class Task(
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM tasks ORDER BY priority ASC")
-    fun getAllTasks(): List<Task>
+    fun getAllTasks(): Flow<List<Task>>
 
     @Insert
-    fun insertTask(task: Task)
+    suspend fun insertTask(task: Task)
 
     @Delete
-    fun deleteTask(task: Task)
+    suspend fun deleteTask(task: Task)
 }
 
 @Database(entities = [Task::class], version = 1)
