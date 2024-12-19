@@ -93,25 +93,27 @@ fun AddScreen(taskDao: TaskDao, navController: NavController) {
                 label = { Text("Task Description") }
             )
             Spacer(modifier = Modifier.height(16.dp))
+            Text("Priority")
+            Spacer(modifier = Modifier.height(16.dp))
             Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     selected = taskPriority == 1,
                     onClick = { taskPriority = 1},
                     colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFEF9A9A))
                 )
-                Text(text = "Priority 1", modifier = Modifier.padding(start = 8.dp))
+                Text(text = "High", modifier = Modifier.padding(start = 8.dp))
                 RadioButton(
                     selected = taskPriority == 2,
                     onClick = { taskPriority = 2 },
                     colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFFFCC80))
                 )
-                Text(text = "Priority 2", modifier = Modifier.padding(start = 8.dp))
+                Text(text = "Medium", modifier = Modifier.padding(start = 8.dp))
                 RadioButton(
                     selected = taskPriority == 3,
                     onClick = { taskPriority = 3 },
                     colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFA5D6A7))
                 )
-                Text(text = "Priority 3", modifier = Modifier.padding(start = 8.dp))
+                Text(text = "Low", modifier = Modifier.padding(start = 8.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
