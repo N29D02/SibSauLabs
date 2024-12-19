@@ -21,13 +21,16 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardElevation
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -53,33 +58,35 @@ class MainActivity : ComponentActivity() {
             database = AppDatabase.getDatabase(applicationContext)
             taskDao = database.taskDao()
 
-            TaskListScreen(taskDao)
+            NavGraph(taskDao = taskDao)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskListScreen(taskDao: TaskDao) {
+fun ListScreen(taskDao: TaskDao, navController: NavController) {
     val context = LocalContext.current
-    val tasks = remember { mutableStateListOf<Task>() }
-
-    LaunchedEffect(Unit) {
-        tasks.addAll(taskDao.getAllTasks().first())
-    }
+    val tasks by taskDao.getAllTasks().collectAsStateWithLifecycle(initialValue = emptyList())
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("ToDo List") }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    val intent = Intent(context, AddActivity::class.java)
-                    context.startActivity(intent)
-                }
+                    navController.navigate("add")
+                },
+                modifier = Modifier,
+                interactionSource = remember { MutableInteractionSource() }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Task")
             }
         }
-    ) {
-        paddingValues ->
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
@@ -89,7 +96,6 @@ fun TaskListScreen(taskDao: TaskDao) {
                 TaskItem(task = task, onDelete = {
                     CoroutineScope(Dispatchers.IO).launch {
                         taskDao.deleteTask(it)
-                        tasks.remove(it)
                     }
                 })
             }
