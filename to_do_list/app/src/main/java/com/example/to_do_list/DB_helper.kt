@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val description: String,
-    val priority: Int // 1 - High, 2 - Medium, 3 - Low
+    val priority: Int
 )
 
 @Dao
