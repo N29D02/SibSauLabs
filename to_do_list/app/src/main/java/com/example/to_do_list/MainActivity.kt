@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -35,6 +37,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -105,10 +108,12 @@ fun ListScreen(taskDao: TaskDao, navController: NavController) {
 
 @Composable
 fun TaskItem(task: Task, onDelete: (Task) -> Unit) {
+    val priorityColor = getPriorityColor(task.priority)
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
+        colors = CardDefaults.cardColors(containerColor = priorityColor)
     ) {
         Row(
             modifier = Modifier
@@ -125,5 +130,15 @@ fun TaskItem(task: Task, onDelete: (Task) -> Unit) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete Task")
             }
         }
+    }
+}
+
+@Composable
+fun getPriorityColor(priority: Int): Color {
+    return when (priority) {
+        1 -> Color(0xFFEF9A9A)
+        2 -> Color(0xFFFFCC80)
+        3 -> Color(0xFFA5D6A7)
+        else -> Color.Gray
     }
 }

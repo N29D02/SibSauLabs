@@ -3,10 +3,12 @@ package com.example.to_do_list
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore.Audio.Radio
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -45,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -88,20 +93,23 @@ fun AddScreen(taskDao: TaskDao, navController: NavController) {
                 label = { Text("Task Description") }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Row {
+            Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     selected = taskPriority == 1,
-                    onClick = { taskPriority = 1 }
+                    onClick = { taskPriority = 1},
+                    colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFEF9A9A))
                 )
                 Text(text = "Priority 1", modifier = Modifier.padding(start = 8.dp))
                 RadioButton(
                     selected = taskPriority == 2,
-                    onClick = { taskPriority = 2 }
+                    onClick = { taskPriority = 2 },
+                    colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFFFCC80))
                 )
                 Text(text = "Priority 2", modifier = Modifier.padding(start = 8.dp))
                 RadioButton(
                     selected = taskPriority == 3,
-                    onClick = { taskPriority = 3 }
+                    onClick = { taskPriority = 3 },
+                    colors = RadioButtonDefaults.colors(selectedColor = Color(0xFFA5D6A7))
                 )
                 Text(text = "Priority 3", modifier = Modifier.padding(start = 8.dp))
             }
