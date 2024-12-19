@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -34,7 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -67,7 +71,8 @@ fun TaskListScreen(taskDao: TaskDao) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-
+                    val intent = Intent(context, AddActivity::class.java)
+                    context.startActivity(intent)
                 }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Task")
@@ -80,7 +85,14 @@ fun TaskListScreen(taskDao: TaskDao) {
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-
+            items(tasks) { task ->
+                TaskItem(task = task, onDelete = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        taskDao.deleteTask(it)
+                        tasks.remove(it)
+                    }
+                })
+            }
         }
     }
 }
