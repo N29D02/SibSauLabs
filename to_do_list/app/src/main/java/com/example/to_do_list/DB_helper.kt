@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.Flow
 data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val description: String,
-    val priority: Int
+    val priority: Int,
+    val description_add: String,
 )
 
 @Dao
@@ -25,7 +26,7 @@ interface TaskDao {
     suspend fun deleteTask(task: Task)
 }
 
-@Database(entities = [Task::class], version = 1)
+@Database(entities = [Task::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
 

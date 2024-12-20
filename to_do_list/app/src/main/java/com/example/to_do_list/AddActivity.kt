@@ -65,6 +65,7 @@ import kotlinx.coroutines.launch
 fun AddScreen(taskDao: TaskDao, navController: NavController) {
     val context = LocalContext.current
     var taskDescription by remember { mutableStateOf("") }
+    var taskDescription_add by remember { mutableStateOf("") }
     var taskPriority by remember { mutableIntStateOf(1) }
 
     Scaffold(
@@ -90,6 +91,11 @@ fun AddScreen(taskDao: TaskDao, navController: NavController) {
             TextField(
                 value = taskDescription,
                 onValueChange = { taskDescription = it },
+                label = { Text("Task title") }
+            )
+            TextField(
+                value = taskDescription_add,
+                onValueChange = { taskDescription_add = it },
                 label = { Text("Task Description") }
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -120,7 +126,7 @@ fun AddScreen(taskDao: TaskDao, navController: NavController) {
                 onClick = {
                     if (taskDescription.isNotEmpty()) {
                         CoroutineScope(Dispatchers.IO).launch {
-                            taskDao.insertTask(Task(description = taskDescription, priority = taskPriority))
+                            taskDao.insertTask(Task(description = taskDescription, priority = taskPriority, description_add = taskDescription_add))
                         }
                         navController.popBackStack()
                     }

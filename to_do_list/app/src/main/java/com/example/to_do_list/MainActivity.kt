@@ -9,8 +9,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -144,14 +146,18 @@ fun TaskItem(task: Task, onDelete: (Task) -> Unit) {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = task.description,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(onClick = { onDelete(task) }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete Task")
+                    Column(modifier = Modifier.padding(8.dp).fillMaxHeight()){
+                        Text(
+                            text = "Title: " + task.description,
+                            modifier = Modifier
+                        )
+                        Text(
+                            text = "Description: " + task.description_add,
+                            modifier = Modifier
+                        )
                     }
+
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
         }
