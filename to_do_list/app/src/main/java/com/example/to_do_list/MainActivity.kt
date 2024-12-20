@@ -119,6 +119,7 @@ fun TaskItem(task: Task, onDelete: (Task) -> Unit) {
         confirmValueChange = { dismissValue ->
             if (dismissValue == DismissValue.DismissedToStart) {
                 onDelete(task)
+                Log.d("test", "Was Deleted")
             }
             true
         }
