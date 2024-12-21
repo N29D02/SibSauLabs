@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.filmapiparcer.Navigations.CustomTopAppBar
 import com.example.filmapiparcer.db.Movie
 import com.example.filmapiparcer.viewModels.MainViewModel
 import com.example.filmapiparcer.viewModels.MovieViewModel
@@ -54,6 +55,13 @@ fun MovieListScreen(navController: NavController) {
     val movies by viewModel.allMovies.collectAsState(initial = emptyList())
 
     Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = "Movie List",
+                canNavigateBack = false,
+                navigateUp = {}
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = { navController.navigate("addMovie") }) {
                 Icon(Icons.Default.Add, contentDescription = "Add Movie")

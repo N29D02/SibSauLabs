@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.filmapiparcer.Navigations.CustomTopAppBar
 import com.example.filmapiparcer.db.Movie
 import com.example.filmapiparcer.viewModels.MainViewModel
 import com.example.filmapiparcer.viewModels.MovieViewModel
@@ -55,59 +56,66 @@ fun AddMovieScreen(navController: NavController) {
     val viewModel: MovieViewModel = viewModel()
     val searchedMovie by viewModel.searchedMovie.collectAsState(initial = null)
 
-    val context = LocalContext.current
-
     var title by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("Movie Title") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = year,
-            onValueChange = { year = it },
-            label = { Text("Year") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
+    val context = LocalContext.current
 
-            if (isNetworkAvailable(context)) {
-                viewModel.searchMovie(title, year)
-            } else {
-                Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = "Add Movie",
+                canNavigateBack = true,
+                navigateUp = { navController.navigateUp() }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Movie Title") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(
+                value = year,
+                onValueChange = { year = it },
+                label = { Text("Year") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                if (isNetworkAvailable(context)) {
+                    viewModel.searchMovie(title, year)
+                } else {
+                    Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+                }
+            }) {
+                Text("Search")
             }
 
-        }) {
-            Text("Search")
-        }
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        searchedMovie?.let { movie ->
-            MovieItem(movie)
-            Button(
-                onClick = {
-                    viewModel.addMovie(movie)
-                    navController.navigateUp()
-                },
-                enabled = true
-            ) {
-                Text("Add Movie")
+            searchedMovie?.let { movie ->
+                MovieItem(movie)
+                Button(
+                    onClick = {
+                        viewModel.addMovie(movie)
+                        navController.navigateUp()
+                    },
+                    enabled = true
+                ) {
+                    Text("Add Movie")
+                }
             }
         }
     }
-
-
 }
