@@ -25,23 +25,27 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchedMovie = MutableStateFlow<Movie?>(null)
     val searchedMovie: StateFlow<Movie?> = _searchedMovie
 
+    private val _searchResults = MutableStateFlow<List<Movie>>(emptyList())
+    val searchResults: StateFlow<List<Movie>> = _searchResults
+
     fun searchMovie(title: String, year: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitClient.api.searchMovies(title, year, "b40aae5f")
                 if (response.isSuccessful && response.body()?.Response == "True") {
-                    val movie = response.body()?.Search?.firstOrNull()
-                    _searchedMovie.value = movie
+                    val movies = response.body()?.Search ?: emptyList()
+                    _searchedMovie.value = movies.firstOrNull()
+                    _searchResults.value = movies
                 } else {
                     _searchedMovie.value = null
+                    _searchResults.value = emptyList()
                 }
             } catch (e: Exception) {
                 _searchedMovie.value = null
+                _searchResults.value = emptyList()
             }
         }
     }
-
-
 
     fun addMovie(movie: Movie) {
         viewModelScope.launch {

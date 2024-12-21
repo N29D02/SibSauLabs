@@ -27,7 +27,7 @@ fun SearchScreen(navController: NavController, viewModel: MovieViewModel, title:
         viewModel.searchMovie(title, "")
     }
 
-    val searchedMovie by viewModel.searchedMovie.collectAsState(initial = null)
+    val searchResults by viewModel.searchResults.collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
@@ -43,12 +43,18 @@ fun SearchScreen(navController: NavController, viewModel: MovieViewModel, title:
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            searchedMovie?.let { movie ->
-                MovieItem(movie)
-            } ?: Text(
-                text = "No results found",
-                modifier = Modifier.align(Alignment.Center)
-            )
+            if (searchResults.isNotEmpty()) {
+                LazyColumn {
+                    items(searchResults) { movie ->
+                        MovieItem(movie)
+                    }
+                }
+            } else {
+                Text(
+                    text = "No results found",
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
 }
