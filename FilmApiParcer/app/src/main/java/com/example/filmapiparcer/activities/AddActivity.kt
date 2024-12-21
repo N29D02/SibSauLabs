@@ -27,13 +27,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.filmapiparcer.Navigations.Screen
 import com.example.filmapiparcer.db.Movie
 import com.example.filmapiparcer.viewModels.MainViewModel
 import com.example.filmapiparcer.viewModels.SearchViewModel
 
 @Composable
-fun AddActivity(viewModel: SearchViewModel) {
+fun AddActivity(viewModel: SearchViewModel, onMovieSelected: (Movie, Boolean) -> Unit, navController: NavController) {
     var query by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
     val searchResults by viewModel.searchResults.observeAsState(emptyList())
@@ -54,16 +56,20 @@ fun AddActivity(viewModel: SearchViewModel) {
         }
 
         if (searchResults.isNotEmpty()) {
-            SearchResults(searchResults)
+            SearchResults(searchResults, onMovieSelected)
+        }
+
+        Button(onClick = { navController.navigate(Screen.Main.route) }) {
+            Text("Back to Main")
         }
     }
 }
 
 @Composable
-fun SearchResults(movies: List<Movie>) {
+fun SearchResults(movies: List<Movie>, onMovieSelected: (Movie, Boolean) -> Unit) {
     LazyColumn {
         items(movies) { movie ->
-            MovieItem(movie) {  }
+            MovieItem(movie, onMovieSelected)
         }
     }
 }

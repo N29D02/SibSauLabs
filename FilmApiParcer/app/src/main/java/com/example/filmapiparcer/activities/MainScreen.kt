@@ -21,20 +21,22 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.filmapiparcer.Navigations.Screen
 import com.example.filmapiparcer.db.Movie
 import com.example.filmapiparcer.viewModels.MainViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainActivity(viewModel: MainViewModel) {
+fun MainScreen(navController: NavController) {
+    val viewModel = viewModel<MainViewModel>()
     val movies by viewModel.movies.observeAsState(emptyList())
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-
-            }) {
+            FloatingActionButton(onClick = { navController.navigate(Screen.Add.route) }) {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
@@ -84,7 +86,7 @@ fun MovieItem(movie: Movie, onMovieSelected: (Movie, Boolean) -> Unit) {
         Text(movie.year)
         Checkbox(
             checked = movie.isSelected,
-            onCheckedChange = { onMovieSelected(movie, it) }
+            onCheckedChange = { isSelected -> onMovieSelected(movie, isSelected) }
         )
     }
 }

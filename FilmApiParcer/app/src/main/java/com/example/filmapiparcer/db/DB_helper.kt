@@ -1,6 +1,7 @@
 package com.example.filmapiparcer.db
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -24,13 +25,10 @@ data class Movie(
 @Dao
 interface MovieDao {
     @Query("SELECT * FROM movies")
-    fun getAll(): List<Movie>
+    fun getAll(): LiveData<List<Movie>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movie: Movie)
-
-    @Delete
-    suspend fun delete(movie: Movie)
 
     @Query("DELETE FROM movies WHERE isSelected = 1")
     suspend fun deleteSelected()
