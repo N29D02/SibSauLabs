@@ -11,18 +11,22 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.filmapiparcer.activities.AddMovieScreen
 import com.example.filmapiparcer.activities.MovieListScreen
-import com.example.filmapiparcer.activities.SearchActivity
+import com.example.filmapiparcer.activities.SearchScreen
+import com.example.filmapiparcer.viewModels.MovieViewModel
 import com.example.filmapiparcer.viewModels.SearchViewModel
 
 @Composable
 fun MovieApp() {
     val navController = rememberNavController()
+    val viewModel: MovieViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = "movieList") {
         composable("movieList") {
@@ -30,6 +34,13 @@ fun MovieApp() {
         }
         composable("addMovie") {
             AddMovieScreen(navController)
+        }
+        composable(
+            "search?title={title}",
+            arguments = listOf(navArgument("title") { defaultValue = "" })
+        ) { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title") ?: ""
+            SearchScreen(navController, viewModel, title)
         }
     }
 }

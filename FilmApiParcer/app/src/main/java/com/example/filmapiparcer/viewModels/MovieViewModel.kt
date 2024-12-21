@@ -29,16 +29,13 @@ class MovieViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitClient.api.searchMovies(title, year, "b40aae5f")
-                Log.d("test", "${response.body()}")
                 if (response.isSuccessful && response.body()?.Response == "True") {
                     val movie = response.body()?.Search?.firstOrNull()
                     _searchedMovie.value = movie
-                    Log.d("test", "${movie?.title}")
                 } else {
                     _searchedMovie.value = null
                 }
             } catch (e: Exception) {
-                Log.d("test", "Error: $e")
                 _searchedMovie.value = null
             }
         }

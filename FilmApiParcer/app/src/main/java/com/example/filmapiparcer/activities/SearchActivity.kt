@@ -1,30 +1,54 @@
 package com.example.filmapiparcer.activities
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.filmapiparcer.Navigations.CustomTopAppBar
 import com.example.filmapiparcer.db.Movie
+import com.example.filmapiparcer.viewModels.MovieViewModel
 import com.example.filmapiparcer.viewModels.SearchViewModel
 
 @Composable
-fun SearchActivity(viewModel: SearchViewModel, onMovieSelected: (Movie, Boolean) -> Unit, navController: NavController) {
-    val searchResults by viewModel.searchResults.observeAsState(emptyList())
+fun SearchScreen(navController: NavController, viewModel: MovieViewModel, title: String) {
+    LaunchedEffect(title) {
+        viewModel.searchMovie(title, "")
+    }
 
-    LazyColumn {
-        items(searchResults) { movie ->
-            //MovieItem(movie, onMovieSelected)
+    val searchedMovie by viewModel.searchedMovie.collectAsState(initial = null)
+
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = "Search Results",
+                canNavigateBack = true,
+                navigateUp = { navController.navigateUp() }
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            searchedMovie?.let { movie ->
+                MovieItem(movie)
+            } ?: Text(
+                text = "No results found",
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
-
-    /*
-    Button(onClick = { navController.navigate(Screen.Add.route) }) {
-        Text("Back to Add")
-    }
-    */
-
 }
