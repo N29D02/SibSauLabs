@@ -1,6 +1,7 @@
 package com.example.filmapiparcer.activities
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -16,6 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -46,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -63,6 +68,7 @@ import com.example.filmapiparcer.viewModels.MovieViewModel
 fun MovieListScreen(navController: NavController) {
     val viewModel: MovieViewModel = viewModel()
     val movies by viewModel.allMovies.collectAsState(initial = emptyList())
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     var selectedMovies by remember { mutableStateOf(emptySet<String>()) }
 
@@ -98,19 +104,41 @@ fun MovieListScreen(navController: NavController) {
                     modifier = Modifier.align(Alignment.Center)
                 )
             } else {
-                LazyColumn(contentPadding = paddingValues) {
-                    items(movies) { movie ->
-                        SelectableMovieItem(
-                            movie = movie,
-                            isSelected = selectedMovies.contains(movie.imdbID),
-                            onSelect = { isSelected ->
-                                selectedMovies = if (isSelected) {
-                                    selectedMovies + movie.imdbID
-                                } else {
-                                    selectedMovies - movie.imdbID
+                if (isLandscape) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = paddingValues
+                    ) {
+                        items(movies) { movie ->
+                            SelectableMovieItem(
+                                movie = movie,
+                                isSelected = selectedMovies.contains(movie.imdbID),
+                                onSelect = { isSelected ->
+                                    selectedMovies = if (isSelected) {
+                                        selectedMovies + movie.imdbID
+                                    } else {
+                                        selectedMovies - movie.imdbID
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
+                    }
+                } else {
+                    // Отображаем фильмы в списке
+                    LazyColumn(contentPadding = paddingValues) {
+                        items(movies) { movie ->
+                            SelectableMovieItem(
+                                movie = movie,
+                                isSelected = selectedMovies.contains(movie.imdbID),
+                                onSelect = { isSelected ->
+                                    selectedMovies = if (isSelected) {
+                                        selectedMovies + movie.imdbID
+                                    } else {
+                                        selectedMovies - movie.imdbID
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
