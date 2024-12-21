@@ -4,43 +4,22 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.filmapiparcer.activities.AddActivity
-import com.example.filmapiparcer.activities.MainScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.filmapiparcer.activities.AddMovieScreen
+import com.example.filmapiparcer.activities.MovieListScreen
 import com.example.filmapiparcer.activities.SearchActivity
 import com.example.filmapiparcer.viewModels.SearchViewModel
 
 @Composable
-fun SetupNavigation(navController: NavHostController) {
-    NavHost(
-        navController = navController,
-        startDestination = Screen.Main.route
-    ) {
-        composable(Screen.Main.route) {
-            MainScreen(navController)
-        }
-        composable(Screen.Add.route) {
-            AddActivity(
-                viewModel = SearchViewModel(),
-                onMovieSelected = { movie, isSelected ->
-                    
-                },
-                navController = navController
-            )
-        }
-        composable(Screen.Search.route) {
-            SearchActivity(
-                viewModel = SearchViewModel(),
-                onMovieSelected = { movie, isSelected ->
+fun MovieApp() {
+    val navController = rememberNavController()
 
-                },
-                navController = navController
-            )
+    NavHost(navController = navController, startDestination = "movieList") {
+        composable("movieList") {
+            MovieListScreen(navController)
+        }
+        composable("addMovie") {
+            AddMovieScreen(navController)
         }
     }
-}
-
-sealed class Screen(val route: String) {
-    object Main : Screen("main")
-    object Add : Screen("add")
-    object Search : Screen("search")
 }

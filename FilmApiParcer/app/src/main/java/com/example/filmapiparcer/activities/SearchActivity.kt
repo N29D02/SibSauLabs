@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavController
-import com.example.filmapiparcer.Navigations.Screen
 import com.example.filmapiparcer.db.Movie
 import com.example.filmapiparcer.viewModels.SearchViewModel
 
@@ -18,11 +17,14 @@ fun SearchActivity(viewModel: SearchViewModel, onMovieSelected: (Movie, Boolean)
 
     LazyColumn {
         items(searchResults) { movie ->
-            MovieItem(movie, onMovieSelected)
+            //MovieItem(movie, onMovieSelected)
         }
     }
 
+    /*
     Button(onClick = { navController.navigate(Screen.Add.route) }) {
         Text("Back to Add")
     }
+    */
+
 }

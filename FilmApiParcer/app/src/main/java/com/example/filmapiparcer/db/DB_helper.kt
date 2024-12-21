@@ -12,13 +12,14 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "movies")
 data class Movie(
     @PrimaryKey val imdbID: String,
-    val title: String,
-    val year: String,
-    val poster: String,
+    @SerializedName("Title") val title: String,
+    @SerializedName("Year") val year: String,
+    @SerializedName("Poster") val poster: String,
     var isSelected: Boolean = false
 )
 
@@ -34,7 +35,7 @@ interface MovieDao {
     suspend fun deleteSelected()
 }
 
-@Database(entities = [Movie::class], version = 1)
+@Database(entities = [Movie::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
 
@@ -48,7 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "movie_database"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }
