@@ -2,6 +2,7 @@ package com.example.filmapiparcer.activities
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,12 +58,22 @@ fun MovieListScreen(navController: NavController) {
     val viewModel: MovieViewModel = viewModel()
     val movies by viewModel.allMovies.collectAsState(initial = emptyList())
 
+    var selectedMovies by remember { mutableStateOf(emptySet<String>()) }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(
                 title = "Movie List",
                 canNavigateBack = false,
-                navigateUp = {}
+                navigateUp = {},
+                onDelete = if (selectedMovies.isNotEmpty()) {
+                    {
+                        viewModel.deleteMoviesById(selectedMovies.toList())
+                        selectedMovies = emptySet()
+                    }
+                } else {
+                    null
+                }
             )
         },
         floatingActionButton = {
@@ -70,8 +84,62 @@ fun MovieListScreen(navController: NavController) {
     ) { paddingValues ->
         LazyColumn(contentPadding = paddingValues) {
             items(movies) { movie ->
-                MovieItem(movie)
+                SelectableMovieItem(
+                    movie = movie,
+                    isSelected = selectedMovies.contains(movie.imdbID),
+                    onSelect = { isSelected ->
+                        selectedMovies = if (isSelected) {
+                            selectedMovies + movie.imdbID
+                        } else {
+                            selectedMovies - movie.imdbID
+                        }
+                    }
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun SelectableMovieItem(
+    movie: Movie,
+    isSelected: Boolean,
+    onSelect: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable { onSelect(!isSelected) },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = isSelected,
+            onCheckedChange = onSelect
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+
+        AsyncImage(
+            model = movie.poster,
+            contentDescription = "Movie Poster",
+            modifier = Modifier
+                .size(80.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column {
+            Text(
+                text = movie.title,
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = movie.year,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }

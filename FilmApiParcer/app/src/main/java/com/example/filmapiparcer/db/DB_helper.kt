@@ -20,7 +20,6 @@ data class Movie(
     @SerializedName("Title") val title: String,
     @SerializedName("Year") val year: String,
     @SerializedName("Poster") val poster: String,
-    var isSelected: Boolean = false
 )
 
 @Dao
@@ -31,11 +30,11 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movie: Movie)
 
-    @Query("DELETE FROM movies WHERE isSelected = 1")
-    suspend fun deleteSelected()
+    @Query("DELETE FROM movies WHERE imdbID = :imdbID")
+    suspend fun deleteById(imdbID: String)
 }
 
-@Database(entities = [Movie::class], version = 2)
+@Database(entities = [Movie::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
 

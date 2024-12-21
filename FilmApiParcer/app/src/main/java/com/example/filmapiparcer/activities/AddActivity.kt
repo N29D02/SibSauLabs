@@ -112,7 +112,7 @@ fun AddMovieScreen(navController: NavController, viewModel: MovieViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
                 if (isNetworkAvailable(context)) {
-                    viewModel.searchMovie(title, year) // Вызываем поиск фильмов
+                    viewModel.searchMovie(title, year)
                 } else {
                     Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
                 }
@@ -126,9 +126,9 @@ fun AddMovieScreen(navController: NavController, viewModel: MovieViewModel) {
                 MovieItem(movie)
                 Button(
                     onClick = {
-                        viewModel.addMovie(movie) // Добавляем фильм в базу данных
-                        viewModel.clearSelectedMovie() // Очищаем выбранный фильм
-                        navController.navigateUp() // Возвращаемся на предыдущий экран
+                        viewModel.addMovie(movie)
+                        viewModel.clearSelectedMovie()
+                        navController.navigateUp()
                     },
                     enabled = true
                 ) {

@@ -54,8 +54,8 @@ fun SearchScreen(navController: NavController, viewModel: MovieViewModel, title:
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    viewModel.setSelectedMovie(movie) // Устанавливаем выбранный фильм
-                                    navController.navigateUp() // Возвращаемся на предыдущий экран
+                                    viewModel.setSelectedMovie(movie)
+                                    navController.navigateUp()
                                 }
                         ) {
                             MovieItem(movie)

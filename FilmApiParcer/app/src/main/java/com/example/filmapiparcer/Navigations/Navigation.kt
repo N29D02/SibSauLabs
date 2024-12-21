@@ -2,6 +2,7 @@ package com.example.filmapiparcer.Navigations
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,21 +27,21 @@ import com.example.filmapiparcer.viewModels.SearchViewModel
 @Composable
 fun MovieApp() {
     val navController = rememberNavController()
-    val movieViewModel: MovieViewModel = viewModel() // Создаем экземпляр MovieViewModel
+    val movieViewModel: MovieViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = "movieList") {
         composable("movieList") {
             MovieListScreen(navController)
         }
         composable("addMovie") {
-            AddMovieScreen(navController, movieViewModel) // Передаем MovieViewModel в AddMovieScreen
+            AddMovieScreen(navController, movieViewModel)
         }
         composable(
             "search?title={title}",
             arguments = listOf(navArgument("title") { defaultValue = "" })
         ) { backStackEntry ->
             val title = backStackEntry.arguments?.getString("title") ?: ""
-            SearchScreen(navController, movieViewModel, title) // Передаем MovieViewModel в SearchScreen
+            SearchScreen(navController, movieViewModel, title)
         }
     }
 }
@@ -50,12 +51,12 @@ fun MovieApp() {
 fun CustomTopAppBar(
     title: String,
     canNavigateBack: Boolean,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    onDelete: (() -> Unit)? = null
 ) {
     TopAppBar(
         title = { Text(text = title) },
-        navigationIcon =
-        {
+        navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateUp) {
                     Icon(
@@ -66,6 +67,17 @@ fun CustomTopAppBar(
                 }
             } else {
                 null
+            }
+        },
+        actions = {
+            if (onDelete != null) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        tint = Color.White,
+                        contentDescription = "Delete"
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

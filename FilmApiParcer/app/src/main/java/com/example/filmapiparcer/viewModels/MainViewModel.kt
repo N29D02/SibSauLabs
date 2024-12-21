@@ -19,10 +19,4 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             movieDao.insert(movie)
         }
     }
-
-    fun deleteSelected() {
-        viewModelScope.launch {
-            movieDao.deleteSelected()
-        }
-    }
 }
