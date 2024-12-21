@@ -1,7 +1,9 @@
 package com.example.filmapiparcer.activities
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,7 +26,9 @@ import com.example.filmapiparcer.viewModels.SearchViewModel
 @Composable
 fun SearchScreen(navController: NavController, viewModel: MovieViewModel, title: String) {
     LaunchedEffect(title) {
-        viewModel.searchMovie(title, "")
+        if (title.isNotEmpty()) {
+            viewModel.searchMovie(title, "")
+        }
     }
 
     val searchResults by viewModel.searchResults.collectAsState(initial = emptyList())
@@ -46,7 +50,16 @@ fun SearchScreen(navController: NavController, viewModel: MovieViewModel, title:
             if (searchResults.isNotEmpty()) {
                 LazyColumn {
                     items(searchResults) { movie ->
-                        MovieItem(movie)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    viewModel.setSelectedMovie(movie) // Устанавливаем выбранный фильм
+                                    navController.navigateUp() // Возвращаемся на предыдущий экран
+                                }
+                        ) {
+                            MovieItem(movie)
+                        }
                     }
                 }
             } else {

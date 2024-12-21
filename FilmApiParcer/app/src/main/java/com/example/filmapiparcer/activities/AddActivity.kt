@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -45,7 +46,6 @@ import com.example.filmapiparcer.Navigations.CustomTopAppBar
 import com.example.filmapiparcer.db.Movie
 import com.example.filmapiparcer.viewModels.MainViewModel
 import com.example.filmapiparcer.viewModels.MovieViewModel
-import com.example.filmapiparcer.viewModels.SearchViewModel
 
 fun isNetworkAvailable(context: Context): Boolean {
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -54,14 +54,20 @@ fun isNetworkAvailable(context: Context): Boolean {
 }
 
 @Composable
-fun AddMovieScreen(navController: NavController) {
-    val viewModel: MovieViewModel = viewModel()
-    val searchedMovie by viewModel.searchedMovie.collectAsState(initial = null)
+fun AddMovieScreen(navController: NavController, viewModel: MovieViewModel) {
+    val selectedMovie by viewModel.selectedMovie.collectAsState(initial = null)
 
-    var title by remember { mutableStateOf("") }
-    var year by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(selectedMovie?.title ?: "") }
+    var year by remember { mutableStateOf(selectedMovie?.year ?: "") }
 
     val context = LocalContext.current
+
+    LaunchedEffect(selectedMovie) {
+        if (selectedMovie != null) {
+            title = selectedMovie!!.title
+            year = selectedMovie!!.year
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -106,7 +112,7 @@ fun AddMovieScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
                 if (isNetworkAvailable(context)) {
-                    viewModel.searchMovie(title, year)
+                    viewModel.searchMovie(title, year) // Вызываем поиск фильмов
                 } else {
                     Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
                 }
@@ -116,12 +122,13 @@ fun AddMovieScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            searchedMovie?.let { movie ->
+            selectedMovie?.let { movie ->
                 MovieItem(movie)
                 Button(
                     onClick = {
-                        viewModel.addMovie(movie)
-                        navController.navigateUp()
+                        viewModel.addMovie(movie) // Добавляем фильм в базу данных
+                        viewModel.clearSelectedMovie() // Очищаем выбранный фильм
+                        navController.navigateUp() // Возвращаемся на предыдущий экран
                     },
                     enabled = true
                 ) {

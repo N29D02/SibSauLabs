@@ -26,21 +26,21 @@ import com.example.filmapiparcer.viewModels.SearchViewModel
 @Composable
 fun MovieApp() {
     val navController = rememberNavController()
-    val viewModel: MovieViewModel = viewModel()
+    val movieViewModel: MovieViewModel = viewModel() // Создаем экземпляр MovieViewModel
 
     NavHost(navController = navController, startDestination = "movieList") {
         composable("movieList") {
             MovieListScreen(navController)
         }
         composable("addMovie") {
-            AddMovieScreen(navController)
+            AddMovieScreen(navController, movieViewModel) // Передаем MovieViewModel в AddMovieScreen
         }
         composable(
             "search?title={title}",
             arguments = listOf(navArgument("title") { defaultValue = "" })
         ) { backStackEntry ->
             val title = backStackEntry.arguments?.getString("title") ?: ""
-            SearchScreen(navController, viewModel, title)
+            SearchScreen(navController, movieViewModel, title) // Передаем MovieViewModel в SearchScreen
         }
     }
 }
