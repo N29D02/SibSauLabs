@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = "spec:width=360dp,height=640dp,dpi=480")
 @Composable
 fun Lab1WidgetPreview() {
     Lab1Theme {
